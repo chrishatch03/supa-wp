@@ -5,7 +5,7 @@ import Image from "next/image";
 
 export const Checklist = () => {
   const [user, setUser] = useState(null);
-  const [checklistData, setChecklistData] = useState({items: []});
+  const [checklistItems, setChecklistItems] = useState(null);
   const supabase = createClient();
 
     useEffect(() => {
@@ -14,26 +14,22 @@ export const Checklist = () => {
             data: { user },
         } = await supabase.auth.getUser();
         setUser(user);
-        console.log(user)
+        console.log(`User: ${user}`)
         }
         fetchUser();
     }, []);
 
     useEffect(() => {
         async function getChecklist() {
-            
-            
             let { data: checklist, error } = await supabase
             .from('checklist')
             .select('items')
-            let betterchecklist = checklist[0]["items"]
-            setChecklistData(checklist)
-            console.log(betterchecklist)
-            console.log(checklist[0]["items"].checklist_length)
-            console.log(checklistData.items)
+            let betterchecklist = checklist[0]["items"]["checklist_items"]
+            setChecklistItems(betterchecklist)
+            console.log(checklistItems)
         }
         getChecklist()
-    }, [setUser]);
+    }, [user]);
 
 return (
     <>
@@ -57,7 +53,7 @@ return (
                 </div>
                 {/* Checklist */}
                 <div className='w-full h-full flex flex-col justify-between'>
-                    {checklistData && (<div>{`${checklistData}`}</div>)}
+                    {/* {checklistData?.items.map((item) => (<div>{item}</div>))} */}
                 </div>
             </div>
         )}
