@@ -2,6 +2,7 @@ import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { NavBar } from "@/components/NavBar";
 import { Checklist } from "@/components/planning/Checklist";
+import { RolesAndGoals } from "@/components/planning/RolesAndGoals";
 
 export default async function PlanPage() {
   const supabase = createClient();
@@ -36,7 +37,9 @@ export default async function PlanPage() {
             min-h-empty
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
-        >Roles and Goals</div>
+        >
+          <RolesAndGoals />
+        </div>
         <div className='w-full h-full ring-2 rounded-3xl
             min-h-empty
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'

@@ -1,24 +1,19 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-import Image from "next/image";
 
 import {
   Dialog,
-  DialogBackdrop,
   DialogPanel,
   DialogTitle,
 } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
-import { SubmitButton } from "@/app/login/submit-button";
-import { AddButton } from "./AddButton";
 
-export const Checklist = () => {
+export const List = ({dbListName}: {dbListName: string}) => {
   const [user, setUser] = useState(null);
-  const [checklistItems, setChecklistItems] = useState(null);
+  const [listItems, setListItems] = useState([]);
   const supabase = createClient();
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     async function fetchUser() {
@@ -32,156 +27,79 @@ export const Checklist = () => {
   }, []);
 
   useEffect(() => {
-    async function getChecklist() {
-      let { data: checklist, error } = await supabase
+    async function getList() {
+      let { data: list, error } = await supabase
         .from("planner")
-        .select("checklist_items");
-      // console.log(checklist);
-      // Assuming checklist is an array with at least one object that has a checklist_items property
-      if (checklist && checklist.length > 0 && checklist[0].checklist_items) {
-        setChecklistItems(checklist[0].checklist_items.items);
+        .select(dbListName);
+      // console.log(list);
+      // Assuming list is an array with at least one object that has a list_items property
+      if (list && list.length > 0 && list[0][dbListName]) {
+        setListItems(list[0][dbListName].items);
       }
     }
-    getChecklist();
+    getList();
   }, [user]);
 
   useEffect(() => {
-    console.log(checklistItems);
-  }, [checklistItems]);
+    console.log(listItems);
+  }, [listItems]);
 
   const handleDeleteItem = async (id) => {
-    // Fetch the current checklist items
-    const { data: currentChecklist, error: fetchError } = await supabase
+    // Fetch the current list items
+    const { data: currentList, error: fetchError } = await supabase
       .from("planner")
-      .select("checklist_items")
+      .select(`${dbListName}`)
       .single(); // Assuming there's only one row for simplicity
 
     if (fetchError) {
-      console.error("Error fetching checklist:", fetchError);
+      console.error("Error fetching list:", fetchError);
       return;
     }
-    console.log(`1 - Current Checklist: ${JSON.stringify(currentChecklist)}`);
+    console.log(`1 - Current list: ${JSON.stringify(currentList)}`);
 
     // Remove the item with the specified id
-    const updatedChecklistItems = currentChecklist.checklist_items.items.filter(
+    const updatedListItems = currentList[dbListName].items.filter(
       (item) => item.id !== id
     );
     console.log(
-      `2 - Items Removed Checklist: ${JSON.stringify(updatedChecklistItems)}`
+      `2 - Items Removed List: ${JSON.stringify(updatedListItems)}`
     );
 
-    // Update the checklist items in Supabase
+    // Update the list items in Supabase
     const { data: updatedData, error: updateError } = await supabase
       .from("planner")
-      .update({ checklist_items: { items: updatedChecklistItems } })
+      .update({ dbListName: { items: updatedListItems } })
       .match({ id: user.id })
       .select();
 
     if (updateError) {
-      console.error("Error updating checklist:", updateError);
+      console.error("Error updating List:", updateError);
       return;
     }
-    console.log(`3 - After Update Checklist: ${JSON.stringify(updatedData)}`);
+    console.log(`3 - After Update List: ${JSON.stringify(updatedData)}`);
 
     // Ensure the updatedData structure is as expected before updating the state
     if (
       updatedData &&
       updatedData.length > 0 &&
-      updatedData[0].checklist_items
+      updatedData[0][dbListName]
     ) {
-      setChecklistItems(updatedData[0].checklist_items.items);
+      setListItems(updatedData[0][dbListName].items);
     } else {
       console.error("Updated data is not in the expected format or is empty.");
     }
     console.log(
-      `4 - Finished Checklist Items: ${JSON.stringify(checklistItems)}`
+      `4 - Finished List Items: ${JSON.stringify(listItems)}`
     );
-  };
-
-  const handleAddItem = async (formData: FormData, event) => {
-    event?.preventDefault();
-    const response = formData.get("addItem");
-    if (response && response !== "") {
-      // Fetch the current checklist items
-      const { data: currentChecklist, error: fetchError } = await supabase
-        .from("planner")
-        .select("checklist_items")
-        .single(); // Assuming there's only one row for simplicity
-
-      if (fetchError) {
-        console.error("Error fetching checklist:", fetchError);
-        return;
-      }
-      console.log(`1 - Current Checklist: ${JSON.stringify(currentChecklist)}`);
-
-      // Add the new item to the checklist
-      const newItem = {
-        id: currentChecklist.checklist_items.items.length + 1, // Increment the id
-        item: response,
-      };
-      currentChecklist.checklist_items.items.push(newItem)
-      console.log(
-        `2 - Items Added Checklist: ${JSON.stringify(currentChecklist)}`
-      );
-
-      // Update the checklist items in Supabase
-      const { data: updatedData, error: updateError } = await supabase
-        .from("planner")
-        .update({ checklist_items: { items: currentChecklist.checklist_items.items } })
-        .match({ id: user.id })
-        .select();
-
-      if (updateError) {
-        console.error("Error updating checklist:", updateError);
-        return;
-      }
-      console.log(`3 - After Update Checklist: ${JSON.stringify(updatedData)}`);
-
-      // Ensure the updatedData structure is as expected before updating the state
-      if (
-        updatedData &&
-        updatedData.length > 0 &&
-        updatedData[0].checklist_items
-      ) {
-        setChecklistItems(updatedData[0].checklist_items.items);
-      } else {
-        console.error(
-          "Updated data is not in the expected format or is empty."
-        );
-      }
-      console.log(
-        `4 - Finished Checklist Items: ${JSON.stringify(checklistItems)}`
-      );
-      setInputValue("");
-    }
   };
 
   return (
     <>
-      {user && (
-        <div className="w-full h-full rounded-3xl flex flex-col p-4">
-          {/* User Header */}
-          <div className="flex flex-row gap-2 mb-10">
-            {/* Profile Pic */}
-            {/* <Image src='/portrait.jpg' width={64} height={64} alt="Profile Pic" className='rounded-full object-cover object-center' /> */}
-            {/* User Info */}
-            <div className="w-full flex flex-col items-center justify-center">
-              <div className="w-full items-start flex flex-row justify-start">
-                <h1 className="text-3xl text-primary dark:text-white font-bold">
-                  Checklist
-                </h1>
-              </div>
-              <div className="w-full flex flex-row justify-start">
-                <p>{user.email}</p>
-              </div>
-            </div>
-          </div>
-          {/* Checklist */}
           <div className="w-full flex flex-col justify-between">
             {user && (
               <div className="w-full h-full flex flex-col gap-2">
-                {checklistItems &&
-                  checklistItems.map(({ id, item }) => (
+                {listItems &&
+                  listItems.map(({ id, item }) => (
                     <div key={id} className="flex flex-row justify-between">
                       {`${item}`}
                       <button onClick={() => setOpen(true)}>Delete</button>
@@ -213,9 +131,9 @@ export const Checklist = () => {
                                     </DialogTitle>
                                     <div className="mt-2">
                                       <p className="text-sm text-gray-500">
-                                        Are you sure you want to delete this
-                                        item from your checklist? This action
-                                        cannot be undone.
+                                        {`Are you sure you want to delete this
+                                        item from ${dbListName}? This action
+                                        cannot be undone.`}
                                         <br />
                                         {item}
                                       </p>
@@ -252,14 +170,6 @@ export const Checklist = () => {
               </div>
             )}
           </div>
-          {/* Add to Checklist */}
-          <AddButton
-            inputValue={inputValue}
-            handleAddItem={handleAddItem}
-            setInputValue={setInputValue}
-          />
-        </div>
-      )}
     </>
   );
 };

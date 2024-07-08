@@ -1,9 +1,6 @@
-import DeployButton from "../components/DeployButton";
-import AuthButton from "../components/AuthButton";
 import { createClient } from "@/utils/supabase/server";
 import { NavBar } from "@/components/NavBar";
-import { useEffect, useState } from "react";
-
+import { ContextProvider } from "@/contexts/Context";
 export default async function Index() {
   const supabase = createClient();
 
@@ -12,7 +9,7 @@ export default async function Index() {
   } = await supabase.auth.getUser();
 
   return ( 
-    <>   
+    <ContextProvider>   
       <div
         className="w-full h-full min-h-screen p-4 gap-4
           grid 
@@ -81,6 +78,6 @@ export default async function Index() {
           7
         </div>
       </div>
-    </>
+    </ContextProvider>
   );
 }
