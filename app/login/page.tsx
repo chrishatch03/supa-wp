@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "./submit-button";
+import { useMyContext } from "@/contexts/Context"
+import { NavBar } from "@/components/NavBar";
 
 export default function Login({
   searchParams,
@@ -24,7 +26,7 @@ export default function Login({
     if (error) {
       return redirect("/login?message=Could not authenticate user");
     }
-
+    
     return redirect("/plan");
   };
 
@@ -79,7 +81,9 @@ export default function Login({
             min-h-empty md:row-span-2
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
-        >Scripture Study</div>
+        >
+          <NavBar />
+        </div>
         <div className='w-full h-full ring-2 rounded-3xl 
             flex flex-col items-center
             min-h-empty md:col-span-2 md:col-start-2 md:row-span-2 md:row-start-2

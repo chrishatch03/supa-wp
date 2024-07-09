@@ -40,9 +40,9 @@ export const List = ({dbListName}: {dbListName: string}) => {
     getList();
   }, [user]);
 
-  useEffect(() => {
-    console.log(listItems);
-  }, [listItems]);
+//   useEffect(() => {
+//     console.log(listItems);
+//   }, [listItems]);
 
   const handleDeleteItem = async (id) => {
     // Fetch the current list items
@@ -55,20 +55,20 @@ export const List = ({dbListName}: {dbListName: string}) => {
       console.error("Error fetching list:", fetchError);
       return;
     }
-    console.log(`1 - Current list: ${JSON.stringify(currentList)}`);
+    // console.log(`1 - Current list: ${JSON.stringify(currentList)}`);
 
     // Remove the item with the specified id
     const updatedListItems = currentList[dbListName].items.filter(
       (item) => item.id !== id
     );
-    console.log(
-      `2 - Items Removed List: ${JSON.stringify(updatedListItems)}`
-    );
+    // console.log(
+    //   `2 - Items Removed List: ${JSON.stringify(updatedListItems)}`
+    // );
 
     // Update the list items in Supabase
     const { data: updatedData, error: updateError } = await supabase
       .from("planner")
-      .update({ dbListName: { items: updatedListItems } })
+      .update({ [dbListName]: { items: updatedListItems } })
       .match({ id: user.id })
       .select();
 
@@ -76,7 +76,7 @@ export const List = ({dbListName}: {dbListName: string}) => {
       console.error("Error updating List:", updateError);
       return;
     }
-    console.log(`3 - After Update List: ${JSON.stringify(updatedData)}`);
+    // console.log(`3 - After Update List: ${JSON.stringify(updatedData)}`);
 
     // Ensure the updatedData structure is as expected before updating the state
     if (
@@ -88,9 +88,9 @@ export const List = ({dbListName}: {dbListName: string}) => {
     } else {
       console.error("Updated data is not in the expected format or is empty.");
     }
-    console.log(
-      `4 - Finished List Items: ${JSON.stringify(listItems)}`
-    );
+    // console.log(
+    //   `4 - Finished List Items: ${JSON.stringify(listItems)}`
+    // );
   };
 
   return (

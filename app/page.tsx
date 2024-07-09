@@ -2,14 +2,19 @@ import { createClient } from "@/utils/supabase/server";
 import { NavBar } from "@/components/NavBar";
 import { ContextProvider } from "@/contexts/Context";
 export default async function Index() {
+  // const supabase = createClient();
+
+  // const {
+  //   data: { user },
+  // } = await supabase.auth.getUser();
+
   const supabase = createClient();
 
   const {
     data: { user },
   } = await supabase.auth.getUser();
-
   return ( 
-    <ContextProvider>   
+    <ContextProvider initialUser={user}>
       <div
         className="w-full h-full min-h-screen p-4 gap-4
           grid 
@@ -19,7 +24,7 @@ export default async function Index() {
           dark:bg-primary"
       >
         {/* Navigation Bar */}
-        <NavBar user={user}/>
+        <NavBar />
         {/* Checklist */}
         <div
           className="w-full h-full ring-2 rounded-3xl

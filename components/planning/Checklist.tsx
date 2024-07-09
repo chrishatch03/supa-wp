@@ -26,7 +26,7 @@ export const Checklist = () => {
         data: { user },
       } = await supabase.auth.getUser();
       setUser(user);
-      console.log(`User: ${user}`);
+    //   console.log(`User: ${user}`);
     }
     fetchUser();
   }, []);
@@ -45,9 +45,9 @@ export const Checklist = () => {
     getChecklist();
   }, [user]);
 
-  useEffect(() => {
-    console.log(checklistItems);
-  }, [checklistItems]);
+//   useEffect(() => {
+//     console.log(checklistItems);
+//   }, [checklistItems]);
 
   const handleDeleteItem = async (id) => {
     // Fetch the current checklist items
@@ -60,15 +60,15 @@ export const Checklist = () => {
       console.error("Error fetching checklist:", fetchError);
       return;
     }
-    console.log(`1 - Current Checklist: ${JSON.stringify(currentChecklist)}`);
+    // console.log(`1 - Current Checklist: ${JSON.stringify(currentChecklist)}`);
 
     // Remove the item with the specified id
     const updatedChecklistItems = currentChecklist.checklist_items.items.filter(
       (item) => item.id !== id
     );
-    console.log(
-      `2 - Items Removed Checklist: ${JSON.stringify(updatedChecklistItems)}`
-    );
+    // console.log(
+    //   `2 - Items Removed Checklist: ${JSON.stringify(updatedChecklistItems)}`
+    // );
 
     // Update the checklist items in Supabase
     const { data: updatedData, error: updateError } = await supabase
@@ -81,7 +81,7 @@ export const Checklist = () => {
       console.error("Error updating checklist:", updateError);
       return;
     }
-    console.log(`3 - After Update Checklist: ${JSON.stringify(updatedData)}`);
+    // console.log(`3 - After Update Checklist: ${JSON.stringify(updatedData)}`);
 
     // Ensure the updatedData structure is as expected before updating the state
     if (
@@ -93,9 +93,9 @@ export const Checklist = () => {
     } else {
       console.error("Updated data is not in the expected format or is empty.");
     }
-    console.log(
-      `4 - Finished Checklist Items: ${JSON.stringify(checklistItems)}`
-    );
+    // console.log(
+    //   `4 - Finished Checklist Items: ${JSON.stringify(checklistItems)}`
+    // );
   };
 
   const handleAddItem = async (formData: FormData, event) => {
@@ -112,7 +112,7 @@ export const Checklist = () => {
         console.error("Error fetching checklist:", fetchError);
         return;
       }
-      console.log(`1 - Current Checklist: ${JSON.stringify(currentChecklist)}`);
+    //   console.log(`1 - Current Checklist: ${JSON.stringify(currentChecklist)}`);
 
       // Add the new item to the checklist
       const newItem = {
@@ -120,9 +120,9 @@ export const Checklist = () => {
         item: response,
       };
       currentChecklist.checklist_items.items.push(newItem)
-      console.log(
-        `2 - Items Added Checklist: ${JSON.stringify(currentChecklist)}`
-      );
+    //   console.log(
+    //     `2 - Items Added Checklist: ${JSON.stringify(currentChecklist)}`
+    //   );
 
       // Update the checklist items in Supabase
       const { data: updatedData, error: updateError } = await supabase
@@ -135,7 +135,7 @@ export const Checklist = () => {
         console.error("Error updating checklist:", updateError);
         return;
       }
-      console.log(`3 - After Update Checklist: ${JSON.stringify(updatedData)}`);
+    //   console.log(`3 - After Update Checklist: ${JSON.stringify(updatedData)}`);
 
       // Ensure the updatedData structure is as expected before updating the state
       if (
@@ -149,9 +149,9 @@ export const Checklist = () => {
           "Updated data is not in the expected format or is empty."
         );
       }
-      console.log(
-        `4 - Finished Checklist Items: ${JSON.stringify(checklistItems)}`
-      );
+    //   console.log(
+    //     `4 - Finished Checklist Items: ${JSON.stringify(checklistItems)}`
+    //   );
       setInputValue("");
     }
   };
