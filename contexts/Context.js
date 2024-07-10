@@ -12,6 +12,89 @@ const ContextProvider = ({ children, initialUser }) => {
     const [roles, setRoles] = useState([]);
     const [goals, setGoals] = useState([]);
 
+    const getList = async (dbColumnName) => {
+        let { data: list, error } = await supabase
+          .from("planner")
+          .select(dbColumnName); // Corrected to use dbColumnName
+        // console.log(list);
+        // Assuming list is an array with at least one object that has a list_items property
+        if (list && list.length > 0 && list[0][dbColumnName]) {
+          if (dbColumnName === "checklist_items") {
+            setChecklistItems(list[0][dbColumnName].items);
+          } else if (dbColumnName === "roles") {
+            setRoles(list[0][dbColumnName].items);
+          } else if (dbColumnName === "goals") {
+            setGoals(list[0][dbColumnName].items);
+          }
+        }
+      };
+
+    const handleAddItem = async (formData, event, dbColumnName) => {
+        event?.preventDefault();
+        const response = formData.get("addItem");
+        if (response && response !== "") {
+          // Fetch the current checklist items
+          const { data: currentChecklist, error: fetchError } = await supabase
+            .from("planner")
+            .select(dbColumnName)
+            .single(); // Assuming there's only one row for simplicity
+    
+          if (fetchError) {
+            console.error("Error fetching checklist:", fetchError);
+            return;
+          }
+            console.log(`1 - Current Checklist: ${JSON.stringify(currentChecklist)}`);
+            console.log(`1 - ChecklistItems: ${JSON.stringify(checklistItems)}`)
+          // Add the new item to the checklist
+          const newItem = {
+            id: currentChecklist[dbColumnName].items.length + 1, // Increment the id
+            item: response,
+          };
+          currentChecklist[dbColumnName].items.push(newItem);
+          //   console.log(
+          //     `2 - Items Added Checklist: ${JSON.stringify(currentChecklist)}`
+          //   );
+    
+          // Update the checklist items in Supabase
+          const { data: updatedData, error: updateError } = await supabase
+            .from("planner")
+            .update({
+              [dbColumnName]: { items: currentChecklist[dbColumnName].items },
+            })
+            .match({ id: user.id })
+            .select();
+    
+          if (updateError) {
+            console.error("Error updating checklist:", updateError);
+            return;
+          }
+          //   console.log(`3 - After Update Checklist: ${JSON.stringify(updatedData)}`);
+    
+          // Ensure the updatedData structure is as expected before updating the state
+          if (
+            updatedData &&
+            updatedData.length > 0 &&
+            updatedData[0][dbColumnName]
+          ) {
+            if (dbColumnName === "checklist_items") {
+                setChecklistItems(updatedData[0][dbColumnName].items);
+                } else if (dbColumnName === "roles") {
+                setRoles(updatedData[0][dbColumnName].items);
+                } else if (dbColumnName === "goals") {
+                setGoals(updatedData[0][dbColumnName].items);
+                }
+          } else {
+            console.error(
+              "Updated data is not in the expected format or is empty."
+            );
+          }
+          //   console.log(
+          //     `4 - Finished Checklist Items: ${JSON.stringify(checklistItems)}`
+          //   );
+          
+        }
+      };
+
     useEffect(() => {
         const fetchUser = async () => {
             const {
@@ -37,7 +120,14 @@ const ContextProvider = ({ children, initialUser }) => {
     }, [supabase, initialUser]);
 
     return (
-        <Context.Provider value={{ user, setUser, checklistItems, setChecklistItems, roles, setRoles, goals, setGoals }}>
+        <Context.Provider value={{ 
+                user, setUser, 
+                checklistItems, setChecklistItems, 
+                roles, setRoles, 
+                goals, setGoals, 
+                handleAddItem, 
+                getList 
+            }}>
             {children}
         </Context.Provider>
     );

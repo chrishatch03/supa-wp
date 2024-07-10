@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { createClient } from "@/utils/supabase/client";
-
+import { useMyContext } from "@/contexts/Context";
 import {
   Dialog,
   DialogPanel,
@@ -10,21 +10,11 @@ import {
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 export const List = ({dbListName}: {dbListName: string}) => {
-  const [user, setUser] = useState(null);
+  const { user, setUser, getList } = useMyContext();
   const [listItems, setListItems] = useState([]);
   const supabase = createClient();
-  const [open, setOpen] = useState(false);
+  const [openItemId, setOpenItemId] = useState(null);
 
-  useEffect(() => {
-    async function fetchUser() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
-      console.log(`User: ${user}`);
-    }
-    fetchUser();
-  }, []);
 
   useEffect(() => {
     async function getList() {
@@ -40,11 +30,8 @@ export const List = ({dbListName}: {dbListName: string}) => {
     getList();
   }, [user]);
 
-//   useEffect(() => {
-//     console.log(listItems);
-//   }, [listItems]);
 
-  const handleDeleteItem = async (id) => {
+  const handleDeleteItem = async (id: number) => {
     // Fetch the current list items
     const { data: currentList, error: fetchError } = await supabase
       .from("planner")
@@ -91,6 +78,7 @@ export const List = ({dbListName}: {dbListName: string}) => {
     // console.log(
     //   `4 - Finished List Items: ${JSON.stringify(listItems)}`
     // );
+    setOpenItemId(null);
   };
 
   return (
@@ -102,10 +90,10 @@ export const List = ({dbListName}: {dbListName: string}) => {
                   listItems.map(({ id, item }) => (
                     <div key={id} className="flex flex-row justify-between">
                       {`${item}`}
-                      <button onClick={() => setOpen(true)}>Delete</button>
+                      <button onClick={() => setOpenItemId(id)}>Delete</button>
                       <Dialog
-                        open={open}
-                        onClose={setOpen}
+                        open={openItemId === id}
+                        onClose={() => setOpenItemId(null)}
                         className="relative z-10"
                       >
                         <div className="fixed inset-0 z-10 w-screen overflow-y-auto">
@@ -144,10 +132,7 @@ export const List = ({dbListName}: {dbListName: string}) => {
                               <div className="bg-white px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                 <button
                                   type="button"
-                                  onClick={() => {
-                                    handleDeleteItem(id);
-                                    setOpen(false);
-                                  }}
+                                  onClick={() => handleDeleteItem(id)}
                                   className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                                 >
                                   Delete
@@ -155,7 +140,7 @@ export const List = ({dbListName}: {dbListName: string}) => {
                                 <button
                                   type="button"
                                   data-autofocus
-                                  onClick={() => setOpen(false)}
+                                  onClick={() => setOpenItemId(null)}
                                   className="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0 sm:w-auto"
                                 >
                                   Cancel
