@@ -5,9 +5,10 @@ import DeployButton from "./DeployButton";
 import { signOut } from "@/app/api/route";
 import Link from "next/link";
 import { useMyContext } from "@/contexts/Context";
+import { Avatar } from "@/components/Avatar";
 
 export const NavBar = () => {
-  const { user, setUser, checklist_items, setChecklistItems, roles, setRoles, goals, setGoals } = useMyContext();
+  const { user, avatarURL } = useMyContext();
   const [navOpen, setNavOpen] = useState(false);
 
   return (
@@ -25,6 +26,7 @@ export const NavBar = () => {
                   <form action={signOut}>
                     <button className="py-2 px-4 rounded-md no-underline bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover">Logout</button>
                   </form>
+                  <Avatar />
                 </div>
               ) : (
                 <Link href="/login" className="min-w-fit py-2 px-4 rounded-md no-underline bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover">

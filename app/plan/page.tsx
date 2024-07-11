@@ -1,8 +1,10 @@
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { NavBar } from "@/components/NavBar";
-import { Checklist } from "@/components/planning/Checklist";
+import { MyPlan } from "@/components/planning/MyPlan";
 import { RolesAndGoals } from "@/components/planning/RolesAndGoals";
+import { MissionStatement } from "@/components/planning/MissionStatement";
+import { VisionBoard } from "@/components/planning/VisionBoard";
 
 export default async function PlanPage() {
   const supabase = createClient();
@@ -26,42 +28,42 @@ export default async function PlanPage() {
     >
       <NavBar />
             
-        <div className='w-full h-full ring-2 rounded-3xl
+        <div className='w-full h-full ring-1 rounded-3xl
             min-h-empty md:row-span-2
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
         >
-          <Checklist />
+          <MyPlan />
         </div>
-        <div className='w-full h-full ring-2 rounded-3xl
+        <div className='w-full h-full ring-1 rounded-3xl
             min-h-empty
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
         >
           <RolesAndGoals />
         </div>
-        <div className='w-full h-full ring-2 rounded-3xl
+        <div className='w-full h-full ring-1 rounded-3xl
             min-h-empty
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
-        >Vision Board</div>
-        <div className='w-full h-full ring-2 rounded-3xl
+        ><VisionBoard /></div>
+        <div className='w-full h-full ring-1 rounded-3xl
             min-h-empty md:row-span-2
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
         >
         </div>
-        <div className='w-full h-full ring-2 rounded-3xl
+        <div className='w-full h-full ring-1 rounded-3xl
             min-h-empty md:col-span-2 md:col-start-2 md:row-span-2 md:row-start-2
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
-        >Mission Statement</div>
-        <div className='w-full h-full ring-2 rounded-3xl
+        ><MissionStatement /></div>
+        <div className='w-full h-full ring-1 rounded-3xl
             min-h-empty
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
         >6</div>
-        <div className='w-full h-full ring-2 rounded-3xl
+        <div className='w-full h-full ring-1 rounded-3xl
             min-h-empty
             
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'

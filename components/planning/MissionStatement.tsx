@@ -1,5 +1,4 @@
 import React from 'react'
-import { useMyContext } from "@/contexts/Context"
 export const MissionStatement = () => {
 
   return (

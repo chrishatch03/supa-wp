@@ -6,9 +6,12 @@ export const RolesAndGoals = () => {
   return (
     <div className='p-4'>
         <List 
-            dbListName='roles'
+            dbColumnName='roles'
         />
         <BetterButton dbColumnName='roles'/>
+        {/* <List
+            dbColumnName='checklist_items'
+        /> */}
     </div>
   )
 }

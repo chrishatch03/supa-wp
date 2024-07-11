@@ -9,85 +9,34 @@ import {
 } from "@headlessui/react";
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
-export const List = ({dbListName}: {dbListName: string}) => {
-  const { user, setUser, getList } = useMyContext();
+export const List = ({dbColumnName}: {dbColumnName: string}) => {
+  const { user, getList, handleDeleteItem, checklistItems, roles, goals } = useMyContext();
   const [listItems, setListItems] = useState([]);
   const supabase = createClient();
-  const [openItemId, setOpenItemId] = useState(null);
+  const [openItemId, setOpenItemId] = useState<number | null>(null);
+  // Step 1: Define selectedColumnItems here
+  let selectedColumnItems;
 
+  // Step 2: Assign the appropriate value based on dbColumnName
+  if (dbColumnName === "checklist_items") {
+    selectedColumnItems = checklistItems;
+  } else if (dbColumnName === "roles") {
+    selectedColumnItems = roles;
+  } else if (dbColumnName === "goals") {
+    selectedColumnItems = goals;
+  }
 
   useEffect(() => {
-    async function getList() {
-      let { data: list, error } = await supabase
-        .from("planner")
-        .select(dbListName);
-      // console.log(list);
-      // Assuming list is an array with at least one object that has a list_items property
-      if (list && list.length > 0 && list[0][dbListName]) {
-        setListItems(list[0][dbListName].items);
-      }
-    }
-    getList();
-  }, [user]);
-
-
-  const handleDeleteItem = async (id: number) => {
-    // Fetch the current list items
-    const { data: currentList, error: fetchError } = await supabase
-      .from("planner")
-      .select(`${dbListName}`)
-      .single(); // Assuming there's only one row for simplicity
-
-    if (fetchError) {
-      console.error("Error fetching list:", fetchError);
-      return;
-    }
-    // console.log(`1 - Current list: ${JSON.stringify(currentList)}`);
-
-    // Remove the item with the specified id
-    const updatedListItems = currentList[dbListName].items.filter(
-      (item) => item.id !== id
-    );
-    // console.log(
-    //   `2 - Items Removed List: ${JSON.stringify(updatedListItems)}`
-    // );
-
-    // Update the list items in Supabase
-    const { data: updatedData, error: updateError } = await supabase
-      .from("planner")
-      .update({ [dbListName]: { items: updatedListItems } })
-      .match({ id: user.id })
-      .select();
-
-    if (updateError) {
-      console.error("Error updating List:", updateError);
-      return;
-    }
-    // console.log(`3 - After Update List: ${JSON.stringify(updatedData)}`);
-
-    // Ensure the updatedData structure is as expected before updating the state
-    if (
-      updatedData &&
-      updatedData.length > 0 &&
-      updatedData[0][dbListName]
-    ) {
-      setListItems(updatedData[0][dbListName].items);
-    } else {
-      console.error("Updated data is not in the expected format or is empty.");
-    }
-    // console.log(
-    //   `4 - Finished List Items: ${JSON.stringify(listItems)}`
-    // );
-    setOpenItemId(null);
-  };
+    getList(dbColumnName);
+  }, []);
 
   return (
     <>
           <div className="w-full flex flex-col justify-between">
             {user && (
               <div className="w-full h-full flex flex-col gap-2">
-                {listItems &&
-                  listItems.map(({ id, item }) => (
+                {selectedColumnItems &&
+                  selectedColumnItems.map(({ id, item }: {id:number, item:string}) => (
                     <div key={id} className="flex flex-row justify-between">
                       {`${item}`}
                       <button onClick={() => setOpenItemId(id)}>Delete</button>
@@ -120,7 +69,7 @@ export const List = ({dbListName}: {dbListName: string}) => {
                                     <div className="mt-2">
                                       <p className="text-sm text-gray-500">
                                         {`Are you sure you want to delete this
-                                        item from ${dbListName}? This action
+                                        item from ${dbColumnName}? This action
                                         cannot be undone.`}
                                         <br />
                                         {item}
@@ -132,7 +81,7 @@ export const List = ({dbListName}: {dbListName: string}) => {
                               <div className="bg-white px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                 <button
                                   type="button"
-                                  onClick={() => handleDeleteItem(id)}
+                                  onClick={() => {handleDeleteItem(id, dbColumnName); setOpenItemId(null);}}
                                   className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                                 >
                                   Delete
