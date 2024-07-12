@@ -9,6 +9,42 @@ const ContextProvider = ({ children, initialUser }) => {
   const supabase = createClient();
   const [user, setUser] = useState(initialUser || null);
   const [avatarURL, setAvatarURL] = useState(null);
+  const [visionBoardURLs, setVisionBoardURLs] = useState([]);
+
+  useEffect(() => {
+    const fetchVisionBoardURLs = async () => {
+      if (!user || !user.id) return;
+
+      let folderName = `${user.id}`; // Assuming the user's UID is used as a directory name
+      const { data: visionBoardFiles, error: visionBoardFilesError } = await supabase.storage
+        .from('visionBoard')
+        .list(folderName)
+
+        let visionFiles = [];
+      if (visionBoardFiles) {
+         visionFiles = visionBoardFiles.map((file) => {
+          return `${folderName}/${file.name}`;
+        });
+      }
+
+      const { data: signedURLs, error: signedURLsError } = await supabase.storage
+        .from('visionBoard')
+        .createSignedUrls(visionFiles, 3600)
+      let finSignedURLs = [];
+      if (signedURLs) {
+        finSignedURLs = signedURLs.map((file) => {
+          return file.signedUrl;
+        });
+      }
+      if (signedURLs[0].error) {
+        setVisionBoardURLs(['/default-avatar.png','/default-avatar.png','/default-avatar.png']);
+      } else if (signedURLs) {
+        return setVisionBoardURLs(finSignedURLs);
+      }
+    };
+
+    fetchVisionBoardURLs();
+  }, [user, supabase]);
 
   useEffect(() => {
     const fetchAvatarURL = async () => {
@@ -22,7 +58,7 @@ const ContextProvider = ({ children, initialUser }) => {
         .createSignedUrl(path, 3600)
 
       if (data) {
-        console.log(data.signedUrl)
+        // console.log(data.signedUrl)
       }
       if (error) {
         setAvatarURL('/default-avatar.png');
@@ -38,6 +74,7 @@ const ContextProvider = ({ children, initialUser }) => {
   const [checklistItems, setChecklistItems] = useState([]);
   const [roles, setRoles] = useState([]);
   const [goals, setGoals] = useState([]);
+  const [missionStatement, setMissionStatement] = useState([]);
 
   const getList = async (dbColumnName, userID) => {
     let { data: list, error } = await supabase
@@ -54,6 +91,8 @@ const ContextProvider = ({ children, initialUser }) => {
         console.log(`Roles: ${roles}`);
       } else if (dbColumnName === "goals") {
         setGoals(list[0][dbColumnName].items);
+      } else if (dbColumnName === "mission_statement") {
+        setMissionStatement(list[0][dbColumnName].items);
       }
     }
   };
@@ -208,12 +247,15 @@ const ContextProvider = ({ children, initialUser }) => {
         user,
         setUser,
         avatarURL,
+        visionBoardURLs,
         checklistItems,
         setChecklistItems,
         roles,
         setRoles,
         goals,
         setGoals,
+        missionStatement,
+        setMissionStatement,
         handleAddItem,
         handleDeleteItem,
         getList,
