@@ -39,10 +39,11 @@ const ContextProvider = ({ children, initialUser }) => {
   const [roles, setRoles] = useState([]);
   const [goals, setGoals] = useState([]);
 
-  const getList = async (dbColumnName) => {
+  const getList = async (dbColumnName, userID) => {
     let { data: list, error } = await supabase
       .from("planner")
-      .select(dbColumnName); // Corrected to use dbColumnName
+      .select(dbColumnName)
+      .eq("id", userID); // Corrected to use dbColumnName
     // console.log(list);
     // Assuming list is an array with at least one object that has a list_items property
     if (list && list.length > 0 && list[0][dbColumnName]) {
@@ -57,7 +58,7 @@ const ContextProvider = ({ children, initialUser }) => {
     }
   };
 
-  const handleAddItem = async (formData, event, dbColumnName) => {
+  const handleAddItem = async (formData, event, dbColumnName, userID) => {
     event?.preventDefault();
     const response = formData.get("addItem");
     if (response && response !== "") {
@@ -65,7 +66,8 @@ const ContextProvider = ({ children, initialUser }) => {
       const { data: currentChecklist, error: fetchError } = await supabase
         .from("planner")
         .select(dbColumnName)
-        .single(); // Assuming there's only one row for simplicity
+        .single()
+        .eq('id',userID); // Assuming there's only one row for simplicity
 
       if (fetchError) {
         console.error("Error fetching checklist:", fetchError);
@@ -122,12 +124,13 @@ const ContextProvider = ({ children, initialUser }) => {
     }
   };
 
-  const handleDeleteItem = async (id, dbColumnName) => {
+  const handleDeleteItem = async (id, dbColumnName, userID) => {
     // Fetch the current list items
     const { data: currentList, error: fetchError } = await supabase
       .from("planner")
       .select(`${dbColumnName}`)
-      .single(); // Assuming there's only one row for simplicity
+      .single()
+      .eq('id',userID); // Assuming there's only one row for simplicity
 
     if (fetchError) {
       console.error("Error fetching list:", fetchError);

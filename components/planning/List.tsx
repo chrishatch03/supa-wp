@@ -1,6 +1,5 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { createClient } from "@/utils/supabase/client";
 import { useMyContext } from "@/contexts/Context";
 import {
   Dialog,
@@ -11,8 +10,6 @@ import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 export const List = ({dbColumnName}: {dbColumnName: string}) => {
   const { user, getList, handleDeleteItem, checklistItems, roles, goals } = useMyContext();
-  const [listItems, setListItems] = useState([]);
-  const supabase = createClient();
   const [openItemId, setOpenItemId] = useState<number | null>(null);
   // Step 1: Define selectedColumnItems here
   let selectedColumnItems;
@@ -27,8 +24,10 @@ export const List = ({dbColumnName}: {dbColumnName: string}) => {
   }
 
   useEffect(() => {
-    getList(dbColumnName);
-  }, []);
+    if (user) {
+      getList(dbColumnName, user.id);
+    }
+  }, [user]);
 
   return (
     <>
@@ -81,7 +80,7 @@ export const List = ({dbColumnName}: {dbColumnName: string}) => {
                               <div className="bg-white px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6">
                                 <button
                                   type="button"
-                                  onClick={() => {handleDeleteItem(id, dbColumnName); setOpenItemId(null);}}
+                                  onClick={() => {handleDeleteItem(id, dbColumnName, user.id); setOpenItemId(null);}}
                                   className="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
                                 >
                                   Delete

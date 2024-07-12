@@ -19,7 +19,9 @@ export const BetterButton = ({ dbColumnName }: { dbColumnName: string }) => {
     const formData = new FormData();
     formData.append("addItem", inputValue);
     // Call handleAddItem with formData, event, and dbColumnName
-    await handleAddItem(formData, event, dbColumnName);
+    if (user) {
+      await handleAddItem(formData, event, dbColumnName, user.id);
+    }
     // Reset input value after submission
     setInputValue("");
   };
