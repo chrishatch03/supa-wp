@@ -3,7 +3,6 @@ import { headers } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { SubmitButton } from "./submit-button";
-import { useMyContext } from "@/contexts/Context"
 import { NavBar } from "@/components/NavBar";
 
 export default function Login({
@@ -43,6 +42,7 @@ export default function Login({
       password,
       options: {
         emailRedirectTo: `${origin}/auth/callback`,
+
       },
     });
 

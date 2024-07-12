@@ -30,6 +30,7 @@ export const List = ({dbColumnName}: {dbColumnName: string}) => {
     selectedColumnItems = goals;
   } else if (dbColumnName === "mission_statement") {
     selectedColumnItems = missionStatement;
+    // Return JSX markup for Mission Statement
     return (
       <div className="w-full flex flex-col justify-between">
             {user && (
@@ -100,7 +101,7 @@ export const List = ({dbColumnName}: {dbColumnName: string}) => {
                         </div>
                       </Dialog>
                     </div>
-                    <div>{desc}</div>
+                    <p className="pl-4">{desc}</p>
                 </div>
                   ))}
               </div>

@@ -16,20 +16,20 @@ const ContextProvider = ({ children, initialUser }) => {
       if (!user || !user.id) return;
 
       let folderName = `${user.id}`; // Assuming the user's UID is used as a directory name
-      const { data: visionBoardFiles, error: visionBoardFilesError } = await supabase.storage
-        .from('visionBoard')
-        .list(folderName)
+      const { data: visionBoardFiles, error: visionBoardFilesError } =
+        await supabase.storage.from("visionBoard").list(folderName);
 
-        let visionFiles = [];
+      let visionFiles = [];
       if (visionBoardFiles) {
-         visionFiles = visionBoardFiles.map((file) => {
+        visionFiles = visionBoardFiles.map((file) => {
           return `${folderName}/${file.name}`;
         });
       }
 
-      const { data: signedURLs, error: signedURLsError } = await supabase.storage
-        .from('visionBoard')
-        .createSignedUrls(visionFiles, 3600)
+      const { data: signedURLs, error: signedURLsError } =
+        await supabase.storage
+          .from("visionBoard")
+          .createSignedUrls(visionFiles, 3600);
       let finSignedURLs = [];
       if (signedURLs) {
         finSignedURLs = signedURLs.map((file) => {
@@ -37,7 +37,11 @@ const ContextProvider = ({ children, initialUser }) => {
         });
       }
       if (signedURLs[0].error) {
-        setVisionBoardURLs(['/default-avatar.png','/default-avatar.png','/default-avatar.png']);
+        setVisionBoardURLs([
+          "/default-avatar.png",
+          "/default-avatar.png",
+          "/default-avatar.png",
+        ]);
       } else if (signedURLs) {
         return setVisionBoardURLs(finSignedURLs);
       }
@@ -54,14 +58,14 @@ const ContextProvider = ({ children, initialUser }) => {
 
       const path = `${basePath}avatar`; // Adjusted to include the UID directory
       const { data, error } = await supabase.storage
-        .from('avatars')
-        .createSignedUrl(path, 3600)
+        .from("avatars")
+        .createSignedUrl(path, 3600);
 
       if (data) {
         // console.log(data.signedUrl)
       }
       if (error) {
-        setAvatarURL('/default-avatar.png');
+        setAvatarURL("/default-avatar.png");
       } else if (data.signedUrl) {
         setAvatarURL(data.signedUrl);
         return;
@@ -98,6 +102,77 @@ const ContextProvider = ({ children, initialUser }) => {
   };
 
   const handleAddItem = async (formData, event, dbColumnName, userID) => {
+    if (dbColumnName === "mission_statement") {
+      event?.preventDefault();
+      const name = formData.get("firstInput");
+      const desc = formData.get("secondInput");
+      if (name && name !== "" && desc && desc !== "") {
+        // Fetch the current checklist items
+        const { data: currentChecklist, error: fetchError } = await supabase
+          .from("planner")
+          .select(dbColumnName)
+          .single()
+          .eq("id", userID); // Assuming there's only one row for simplicity
+
+        if (fetchError) {
+          console.error("Error fetching checklist:", fetchError);
+          return;
+        }
+        console.log(
+          `1 - Current Checklist: ${JSON.stringify(currentChecklist)}`
+        );
+        console.log(`1 - ChecklistItems: ${JSON.stringify(checklistItems)}`);
+        // Add the new item to the checklist
+        const newItem = {
+          id: currentChecklist[dbColumnName].items.length + 1, // Increment the id
+          name: name,
+          desc: desc,
+        };
+        currentChecklist[dbColumnName].items.push(newItem);
+        //   console.log(
+        //     `2 - Items Added Checklist: ${JSON.stringify(currentChecklist)}`
+        //   );
+
+        // Update the checklist items in Supabase
+        const { data: updatedData, error: updateError } = await supabase
+          .from("planner")
+          .update({
+            [dbColumnName]: { items: currentChecklist[dbColumnName].items },
+          })
+          .match({ id: user.id })
+          .select();
+
+        if (updateError) {
+          console.error("Error updating checklist:", updateError);
+          return;
+        }
+        //   console.log(`3 - After Update Checklist: ${JSON.stringify(updatedData)}`);
+
+        // Ensure the updatedData structure is as expected before updating the state
+        if (
+          updatedData &&
+          updatedData.length > 0 &&
+          updatedData[0][dbColumnName]
+        ) {
+          if (dbColumnName === "checklist_items") {
+            setChecklistItems(updatedData[0][dbColumnName].items);
+          } else if (dbColumnName === "roles") {
+            setRoles(updatedData[0][dbColumnName].items);
+          } else if (dbColumnName === "goals") {
+            setGoals(updatedData[0][dbColumnName].items);
+          } else if (dbColumnName === "mission_statement") {
+            setMissionStatement(updatedData[0][dbColumnName].items);
+          }
+        } else {
+          console.error(
+            "Updated data is not in the expected format or is empty."
+          );
+        }
+        //   console.log(
+        //     `4 - Finished Checklist Items: ${JSON.stringify(checklistItems)}`
+        //   );
+      }
+    }
     event?.preventDefault();
     const response = formData.get("addItem");
     if (response && response !== "") {
@@ -106,7 +181,7 @@ const ContextProvider = ({ children, initialUser }) => {
         .from("planner")
         .select(dbColumnName)
         .single()
-        .eq('id',userID); // Assuming there's only one row for simplicity
+        .eq("id", userID); // Assuming there's only one row for simplicity
 
       if (fetchError) {
         console.error("Error fetching checklist:", fetchError);
@@ -169,7 +244,7 @@ const ContextProvider = ({ children, initialUser }) => {
       .from("planner")
       .select(`${dbColumnName}`)
       .single()
-      .eq('id',userID); // Assuming there's only one row for simplicity
+      .eq("id", userID); // Assuming there's only one row for simplicity
 
     if (fetchError) {
       console.error("Error fetching list:", fetchError);
@@ -206,6 +281,8 @@ const ContextProvider = ({ children, initialUser }) => {
         setRoles(updatedData[0][dbColumnName].items);
       } else if (dbColumnName === "goals") {
         setGoals(updatedData[0][dbColumnName].items);
+      } else if (dbColumnName === "mission_statement") {
+        setMissionStatement(updatedData[0][dbColumnName].items);
       }
     } else {
       console.error("Updated data is not in the expected format or is empty.");

@@ -1,36 +1,39 @@
 "use client";
 import React from "react";
 import { List } from "./List";
-import { BetterButton } from "./BetterButton";
+import { InputToDatabase } from "./InputToDatabase";
 import { useMyContext } from "@/contexts/Context";
 import { Avatar } from "@/components/Avatar";
 
 export const MyPlan = () => {
-  const { user, avatarURL } = useMyContext();
+  const { user } = useMyContext();
   return (
     <>
       {user && (
         <div className="w-full h-full rounded-3xl flex flex-col p-4">
           {/* User Header */}
-          <div className="flex flex-row gap-2 mb-10">
-            {/* Profile Pic */}
+          <div className="relative flex items-center gap-x-4">
+            {/* <img src="/images/portrait.jpg" alt="" className="h-10 w-10 rounded-full ring-1 dark:ring-white/10 ring-primary/5 object-cover" style="object-position: 50% 50%;"/> */}
             <Avatar />
-            {/* User Info */}
-            <div className="w-full flex flex-col items-center justify-center">
-              <div className="w-full items-start flex flex-row justify-start">
-                <h1 className="text-3xl text-primary dark:text-white font-bold">
-                  This week
-                </h1>
-              </div>
-              <div className="w-full flex flex-row justify-start">
-                <p>{user.email}</p>
-              </div>
+            <div className="text-md leading-6">
+              <p className="font-semibold text-primary dark:text-white">
+                <a href="#">
+                  <span className="absolute inset-0"></span>
+                  User's name goes here
+                </a>
+              </p>
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                User Bio Goes Here
+              </p>
             </div>
           </div>
+          <p className="text-3xl mt-6 font-medium lg:text-4xl tracking-tight text-primary dark:text-white">
+            This week
+          </p>
           {/* Checklist */}
           <List dbColumnName="checklist_items" />
           {/* Add to Checklist */}
-          <BetterButton dbColumnName="checklist_items" />
+          <InputToDatabase dbColumnName="checklist_items" />
         </div>
       )}
     </>

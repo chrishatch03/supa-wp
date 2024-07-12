@@ -1,17 +1,14 @@
-import React from 'react'
-import { List } from '@/components/planning/List'
-import { BetterButton } from './BetterButton'
+import React from "react";
+import { List } from "@/components/planning/List";
+import { InputToDatabase } from "./InputToDatabase";
 
 export const RolesAndGoals = () => {
   return (
-    <div className='p-4'>
-        <List 
-            dbColumnName='roles'
-        />
-        <BetterButton dbColumnName='roles'/>
-        {/* <List
-            dbColumnName='checklist_items'
-        /> */}
+    <div className="p-4">
+      <List dbColumnName="roles" />
+      <InputToDatabase dbColumnName="roles" />
+      <List dbColumnName="goals" />
+      <InputToDatabase dbColumnName="goals" />
     </div>
-  )
-}
+  );
+};
