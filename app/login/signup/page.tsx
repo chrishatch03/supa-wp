@@ -4,7 +4,6 @@ import { SubmitButton } from "../submit-button";
 import { NavBar } from "@/components/NavBar";
 import { signIn, signUp } from "@/app/api/route";
 import { useState } from "react";
-import { Sign } from "crypto";
 
 export default function Signup({
   searchParams,
@@ -12,6 +11,7 @@ export default function Signup({
   searchParams: { message: string };
 }) {
   const [authFunc, setAuthFunc] = useState("signin");
+
   return (
     <div
       className="w-full h-full min-h-screen p-4 gap-4

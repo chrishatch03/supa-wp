@@ -24,44 +24,45 @@ export const signIn = async (formData: FormData) => {
   if (error) {
     return redirect("/login?message=Could not authenticate user");
   }
-  
+
   return redirect("/plan");
 };
 
 export const signUp = async (formData: FormData) => {
   "use server";
 
+  // const origin = headers().get("origin");
+  // const email = formData.get("email") as string;
+  // const password = formData.get("password") as string;
+  // const supabase = createClient();
+
+  // const { error } = await supabase.auth.signUp({
+  //   email,
+  //   password,
+  //   options: {
+  //     emailRedirectTo: `${origin}/auth/callback`,
+
+  //   },
+  // });
+
   const origin = headers().get("origin");
   const firstName = formData.get("first_name") as string;
   const lastName = formData.get("last_name") as string;
-  const email = formData.get("email") as string;
-  const password = formData.get("password") as string;
+  const newEmail = formData.get("email") as string;
+  const newPassword = formData.get("password") as string;
   const supabase = createClient();
 
-  const { data: { user }, error } = await supabase.auth.signUp({
-    email,
-    password,
+  const { data, error } = await supabase.auth.signUp({
+    email: newEmail,
+    password: newPassword,
     options: {
       emailRedirectTo: `${origin}/auth/callback`,
+      data: {
+        first_name: firstName,
+        last_name: lastName,
+      },
     },
   });
-
-
-  if (user) {
-    // Insert a default row into the profiles table
-    await supabase
-      .from('profiles')
-      .insert([
-        { id: user.id, first_name: firstName, last_name: lastName, /* other default values */ },
-      ]);
-
-    // Insert a default row into the planner table
-    await supabase
-      .from('planner')
-      .insert([
-        { id: user.id, /* other default values */ },
-      ]);
-  }
 
   if (error) {
     return redirect("/login?message=Could not authenticate user");
