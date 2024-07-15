@@ -19,7 +19,11 @@ export const MyPlan = () => {
               <p className="font-semibold text-primary dark:text-white">
                 <a href="#">
                   <span className="absolute inset-0"></span>
-                  User's name goes here
+                  {user.user_metadata.first_name && user.user_metadata.last_name ? (
+                    `${user.user_metadata.first_name} ${user.user_metadata.last_name}`
+                  ) : (
+                    'Go Getter'
+                  )}
                 </a>
               </p>
               <p className="text-sm text-zinc-500 dark:text-zinc-400">

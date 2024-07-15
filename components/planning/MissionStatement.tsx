@@ -7,7 +7,6 @@ export const MissionStatement = () => {
       <h1 className="text-2xl font-bold">Mission Statement</h1>
       <List dbColumnName="mission_statement" />
       <InputToDatabase dbColumnName="mission_statement" />
-      <InputToDatabase dbColumnName="roles" />
     </div>
   );
 };

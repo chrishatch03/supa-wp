@@ -92,7 +92,7 @@ const ContextProvider = ({ children, initialUser }) => {
         setChecklistItems(list[0][dbColumnName].items);
       } else if (dbColumnName === "roles") {
         setRoles(list[0][dbColumnName].items);
-        console.log(`Roles: ${roles}`);
+        // console.log(`Roles: ${roles}`);
       } else if (dbColumnName === "goals") {
         setGoals(list[0][dbColumnName].items);
       } else if (dbColumnName === "mission_statement") {
