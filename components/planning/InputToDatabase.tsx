@@ -31,16 +31,16 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
   };
 
   return (
-    <div className="mt-10 w-full bg-blue-500 rounded-full py-2 px-4 flex flex-row justify-center gap-4">
+    <div className="mt-10 w-full bg-primary dark:bg-white rounded-xl p-4 flex flex-col justify-center items-center gap-4">
       <form
-        className="flex flex-row w-full justify-center gap-2 text-primary"
+        className="flex flex-row w-full justify-between gap-2 text-primary"
         onSubmit={handleSubmit} // handleSubmit uses handleAddItem from context for form submission
       >
         {/* One or two input fields to handle different form data */}
         {dbColumnName === "mission_statement" ? (
           <>
             <input
-              className="rounded-full px-4 py-2 border"
+              className="rounded-lg px-4 border"
               type="text"
               name="firstItem"
               placeholder="••••••••"
@@ -48,7 +48,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
               onChange={(e) => setFirstInputValue(e.target.value)}
             />
             <input
-              className="rounded-full px-4 py-2 border"
+              className="rounded-lg px-4 border"
               type="text"
               name="secondItem"
               placeholder="••••••••"
@@ -58,7 +58,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
           </>
           ) : (
             <input
-              className="rounded-full px-4 py-2 border"
+              className="rounded-lg px-4 border"
               type="text"
               name="firstItem"
               placeholder="••••••••"
@@ -67,7 +67,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
             />
           )}
         <SubmitButton
-          className="border border-blue-900 rounded-md px-4 py-2 text-foreground mb-2"
+          className="border border-white dark:border-primary rounded-lg px-4 py-2 text-white dark:text-primary mb-2"
           pendingText="..."
         >
           +

@@ -1,42 +1,24 @@
 "use client";
 import { useState, useEffect } from 'react';
 import { useMyContext } from "@/contexts/Context";
-import { uploadFile } from "@/app/api/uploadFile";
+import NewDream from './NewDream';
+import EditDream from './EditDream';
 
 export const VisionBoard = () => {
   const { user, visionBoardURLs } = useMyContext();
-
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  // console.log(visionBoardURLs);
+  const [selectedImage, setSelectedImage] = useState<any | null>(null);
   const [editVision, setEditVision] = useState<boolean>(false);
   const [newDream, setNewDream] = useState<boolean>(false);
-  const handleImageClick = (imageUrl: string) => {
-    setSelectedImage(imageUrl);
+  const [editDream, setEditDream] = useState<boolean>(false);
+  const handleImageClick = (file) => {
+    console.log(file);
+    setSelectedImage(file);
   };
 
   // Temporary Variables To Be Put In Vision Board Table
-  const visionName = "My Vision Item Name";
   
-  const [selectedFile, setSelectedFile] = useState(null);
-
-  const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
-  };
-
-  const handleUpload = async () => {
-    if (!selectedFile) {
-      alert('Please select a file first!');
-      return;
-    }
-
-    try {
-      // Assuming uploadFile is a function that takes a File object and returns a Promise
-      await uploadFile(selectedFile, user);
-      alert('File uploaded successfully!');
-    } catch (error) {
-      console.error('Upload failed:', error);
-      alert('Upload failed. Please try again.');
-    }
-  };
+  
   return (
     <div className="bg-pbbgIR bg-cover  flex flex-col justify-between items-center rounded-3xl p-8 overflow-hidden text-center lg:text-left">
       <div>
@@ -47,15 +29,15 @@ export const VisionBoard = () => {
         {/* COMPACT DISPLAY IMAGES */}
         {visionBoardURLs && visionBoardURLs.length > 0 ? (
           <div
-            className={`grid grid-cols-3 gap-4 w-full h-full mt-4`}
+            className={`grid grid-cols-3 auto-rows-fr gap-4 w-full h-full mt-4`}
           >
-            {visionBoardURLs.map((signedURL: string) => (
+            {visionBoardURLs.map((file) => (
               <img
-                key={signedURL}
-                src={signedURL}
+                key={file.signedUrl}
+                src={file.signedUrl}
                 alt="One of my Goals"
-                className="h-full w-full flex shadow-xl dark:shadow-thick object-cover object-center rounded-3xl hover:scale-105"
-                onClick={() => handleImageClick(signedURL)}
+                className="h-full w-full aspect-square flex shadow-xl dark:shadow-thick object-cover object-center rounded-3xl hover:scale-105"
+                onClick={() => handleImageClick(file)}
               />
             ))}
           </div>
@@ -75,37 +57,53 @@ export const VisionBoard = () => {
         </p>
       </div>
 
-      {/* SELECTED IMAGE DISPLAY */}
+      {/* SELECTED IMAGE MODAL */}
       {selectedImage && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-50 flex justify-center items-center">
-          <div className="flex flex-col items-center justify-center w-1/2 h-auto p-4 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick">
-            <p className="text-xl font-medium text-primary dark:text-white">
-              {visionName}
-            </p>
-            <img
-              src={selectedImage}
-              alt="Selected Image"
-              className="h-full max-h-60"
-            />
-            <button
-              className="border border-blue-900 rounded-md px-4 py-2 text-foreground mt-2"
-              onClick={() => {setEditVision(true), setSelectedImage(null)}}
-            >
-              Edit Vision
-            </button>
-            <button
-              className="border border-blue-900 rounded-md px-4 py-2 text-foreground mt-2"
-              onClick={() => setSelectedImage(null)}
-            >
-              Close
-            </button>
+        <div className="fixed top-0 left-0 w-screen h-screen bg-gray-400 bg-opacity-50 flex justify-center items-center">
+          <div className="flex flex-col items-center justify-center w-auto h-auto p-8 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick">
+            <h1 className="text-2xl font-medium text-primary dark:text-white">
+              {selectedImage.title ? (selectedImage.title) : ("Dream Name")}
+            </h1>
+            {/* DISPLAY CURRENTLY SELECTED IMAGE */}
+            <div className="flex items-center justify-center h-full max-h-60 max-w-lg mt-4 rounded-3xl shadow dark:shadow-thick overflow-hidden">
+              <img
+                src={selectedImage.signedUrl}
+                alt="Selected Image"
+                className="object-cover object-center w-full h-full"
+              />
+            </div>
+            {/* DISPLAY GOAL INFO */}
+            <div className="flex flex-col items-center justify-center mt-4 max-w-lg">
+              <p className="text-lg text-primary dark:text-white">
+                {selectedImage.goal_date ? (selectedImage.goal_date) : ("Due Date")}
+              </p>
+              <p className="text-lg text-primary dark:text-white">
+                {selectedImage.notes ? (selectedImage.notes) : ("Dream Name")}
+              </p>
+            </div>
+            {/* EDIT VISION AND CLOSE BUTTONS */}
+            <div className='w-full flex flex-row justify-between items-center mt-4'>
+              <button
+                className="border border-blue-900 rounded-md px-4 py-2 text-foreground mt-2"
+                onClick={() => {setEditVision(true), setSelectedImage(null)}}
+              >
+                Edit Vision
+              </button>
+              <button
+                className="border border-blue-900 rounded-md px-4 py-2 text-foreground mt-2"
+                onClick={() => setSelectedImage(null)}
+              >
+                Close
+              </button>
+            </div>
           </div>
         </div>
       )}
 
       {/* VISION EDITOR */}
       {editVision && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-50 flex justify-center items-center">
+        <div className="fixed top-0 left-0 w-screen h-screen bg-gray-400 bg-opacity-50 flex justify-center items-center">
+          <div className='flex flex-col items-center overflow-y-auto w-full h-full p-20'>
           <div className="flex flex-col relative items-center justify-center w-1/2 h-auto p-8 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-2xl dark:shadow-thick">
             <p className="text-xl font-medium text-primary dark:text-white">
             "Knowing yourself is the beginning of all wisdom."
@@ -113,13 +111,11 @@ export const VisionBoard = () => {
               –Aristotle.
               </p>
             </p>
-            <div className="grid grid-cols-3 gap-2 mt-4">
-              {visionBoardURLs.map((signedURL: string) => (Image(signedURL, "Due Date", "Title")))}
+            <div className="grid grid-cols-3 gap-2 mt-8">
+              {visionBoardURLs.map((file) => (<button onClick={() => setEditDream(file)}>{Image(file.signedUrl, file.goal_date, file.title, file)}</button>))}
             </div>
-            
-            <div id="">Loading uploader...</div>
             <button
-              className="border border-blue-900 rounded-md px-4 py-2 text-foreground"
+              className="border border-blue-900 rounded-md px-4 py-2 text-foreground mt-8"
               onClick={() => {setNewDream(true)}}
             >
               Create New Dream
@@ -131,36 +127,52 @@ export const VisionBoard = () => {
               Close
             </button>
           </div>
+          </div>
         </div>
       )}
 
       {/* New Dream */}
       {newDream && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-50 flex justify-center items-center">
-          <div className="flex flex-col relative items-center justify-center w-1/3 h-auto p-8 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-2xl dark:shadow-thick">
-              <div>
-              <input type="file" onChange={handleFileChange} />
-              <button onClick={handleUpload}>Upload File</button>
-            </div>
-          </div>
-        </div>
-              )}
+        
+        <NewDream setState={setNewDream} />
+      )}
+
+      {/* EDIT DREAM */}
+      {editDream && (
+        <EditDream setState={setEditDream} startFile={editDream}/>
+      )}
     </div>
   );
 };
 
-function Image(signedURL: string, dueDate: string, title: string) {
+function Image(signedUrl: string, dueDate: string, title: string, file: any) {
   return (
-    <a href="#" className="group p-2 rounded-xl bg-slate-200 shadow-lg">
-      <div className="flex aspect-w-1 aspect-h-1 xl:aspect-w-7 xl:aspect-h-8 w-full overflow-hidden rounded-lg bg-gray-200">
-        <img
-          src="https://dummyimage.com/720x400"
-          alt="content"
-          className="object-cover object-center w-full h-full group-hover:opacity-75"
-        />
+    <div className="relative group p-2 rounded-xl bg-slate-200 shadow-lg">
+      <div className="flex aspect-square w-full overflow-hidden rounded-lg bg-gray-200">
+        {signedUrl ? (
+          <img
+            src={signedUrl}
+            alt="content"
+            className="object-cover object-center w-full h-full group-hover:opacity-75"
+          />
+        ) : (
+          <img
+            src="https://dummyimage.com/720x400"
+            alt="content"
+            className="object-cover object-center w-full h-full group-hover:opacity-75"
+          />
+        )}
       </div>
+      {dueDate ? (
       <h3 className="mt-4 text-sm text-gray-700">By: {dueDate}</h3>
+        ) : (
+          <h3 className="mt-4 text-sm text-gray-700">By: Due Date</h3>
+        )}
+      {title ? (
       <p className="mt-1 text-lg font-medium text-gray-900">{title}</p>
-    </a>
+        ) : (
+          <p className="mt-1 text-lg font-medium text-gray-900">Title</p>
+        )}
+    </div>
   );
 }

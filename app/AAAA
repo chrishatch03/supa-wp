@@ -1,9 +1,5 @@
 - Fix Profile Pic Path on 'Plan' Page
 
-- Set up user context so you don't have to create a supabase client on every page
-    Pages that use createClient
+- improve file uploads. use the tus resumable upload
 
-json {
-    "checklist_length":[1],
-    "checklist_items":["Checklist Item #1","Checklist Item #2]
-}
+- Use File Metadata

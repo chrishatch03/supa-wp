@@ -10,6 +10,18 @@ const ContextProvider = ({ children, initialUser }) => {
   const [user, setUser] = useState(initialUser || null);
   const [avatarURL, setAvatarURL] = useState(null);
   const [visionBoardURLs, setVisionBoardURLs] = useState([]);
+  const [rerenderVisionBoard, setRerenderVisionBoard] = useState(false);
+
+
+  // const getMetadata = async (userID) => {
+  //   const { data: metadata, error: metadataError } = await supabase
+  //     .from("image_metadata")
+  //     .select()
+  //     .eq("id", userID); // Corrected to use dbColumnName
+  //   console.log(metadata)
+  //   console.log(userID)
+  //   return metadata
+  // }
 
   useEffect(() => {
     const fetchVisionBoardURLs = async () => {
@@ -31,11 +43,9 @@ const ContextProvider = ({ children, initialUser }) => {
           .from("visionBoard")
           .createSignedUrls(visionFiles, 3600);
       let finSignedURLs = [];
-      if (signedURLs) {
-        finSignedURLs = signedURLs.map((file) => {
-          return file.signedUrl;
-        });
-      }
+      // console.log(signedURLs)
+
+      
       if (signedURLs[0].error) {
         setVisionBoardURLs([
           "/default-avatar.png",
@@ -43,12 +53,44 @@ const ContextProvider = ({ children, initialUser }) => {
           "/default-avatar.png",
         ]);
       } else if (signedURLs) {
-        return setVisionBoardURLs(finSignedURLs);
+        const { data: metadata, error: metadataError } = await supabase
+        .from("image_metadata")
+        .select()
+        .eq("id", user.id); // Corrected to use dbColumnName
+        
+        if (metadataError) {
+          console.error("Error fetching metadata:", metadataError);
+          return;
+        }
+        // console.log(metadata)
+
+        if (signedURLs && metadata) {
+          finSignedURLs = signedURLs.map((urlItem) => {
+            // Find the corresponding metadata item
+            const metadataItem = metadata.find((metaItem) => `${metaItem.file_name}` === urlItem.path);
+            // Return a new object combining the URL and any relevant metadata
+            return {
+              signedUrl: urlItem.signedUrl,
+              // Include any other metadata properties you need, for example:
+              title: metadataItem?.title,
+              goal_date: metadataItem?.goal_date,
+              notes: metadataItem?.notes,
+              path: urlItem.path,
+              name: urlItem.path.split("/")[1],
+              // Add more fields as needed
+            };
+          });
+          // console.log(finSignedURLs);
+          // Now you can set the vision board URLs with the newly created finSignedURLs array
+          setRerenderVisionBoard(false);
+          return setVisionBoardURLs(finSignedURLs);
+
+        }
       }
     };
 
     fetchVisionBoardURLs();
-  }, [user, supabase]);
+  }, [user, supabase, rerenderVisionBoard]);
 
   useEffect(() => {
     const fetchAvatarURL = async () => {
@@ -325,6 +367,8 @@ const ContextProvider = ({ children, initialUser }) => {
         setUser,
         avatarURL,
         visionBoardURLs,
+        rerenderVisionBoard,
+        setRerenderVisionBoard,
         checklistItems,
         setChecklistItems,
         roles,
