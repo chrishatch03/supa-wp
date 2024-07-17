@@ -1,7 +1,6 @@
 // components/NavBar.js
 "use client";
 import React, { useState } from "react";
-import DeployButton from "./DeployButton";
 import { signOut } from "@/app/api/myRoute";
 import Link from "next/link";
 import { useMyContext } from "@/contexts/Context";
@@ -19,7 +18,6 @@ export const NavBar = () => {
       <nav id="navBar" className={`${navOpen ? "" : "hidden"} absolute top-0 right-0 w-1/4 flex justify-center h-full backdrop-blur-md`}>
         <div className="w-full flex flex-col h-full justify-start ">
           <div className="w-full max-w-4xl flex justify-between items-center p-3 text-sm h-16 border-b border-b-primary dark:border-b-white">
-            <DeployButton />
             <div className="flex flex-row max-h-10">
               {user ? (
                 <div className="flex items-center gap-4 min-w-fit">
