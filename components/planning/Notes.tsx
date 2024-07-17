@@ -9,7 +9,7 @@ const Notes = () => {
         setNewNotes(notes);
     }, [notes]);
 
-    const handleSubmit = (e) => {
+    const handleSubmit = (e: any) => {
         e.preventDefault();
         updateNotes(newNotes);
     }
@@ -56,7 +56,7 @@ const Notes = () => {
             </label>
             <textarea
               id="editor"
-              rows="8"
+              rows={8}
               className="block w-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
               placeholder="Write an article..."
               value={newNotes}

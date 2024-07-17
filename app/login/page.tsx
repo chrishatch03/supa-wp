@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { SubmitButton } from "./submit-button";
 import { NavBar } from "@/components/NavBar";
-import { signIn, signUp } from "@/app/api/route";
+import { signIn, signUp } from "@/app/api/myRoute";
 import { useState } from "react";
 
 export default function Signup({

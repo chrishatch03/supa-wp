@@ -2,7 +2,7 @@
 "use client";
 import React, { useState } from "react";
 import DeployButton from "./DeployButton";
-import { signOut } from "@/app/api/route";
+import { signOut } from "@/app/api/myRoute";
 import Link from "next/link";
 import { useMyContext } from "@/contexts/Context";
 import { Avatar } from "@/components/Avatar";

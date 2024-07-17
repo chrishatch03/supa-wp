@@ -5,7 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 const supabase = createClient();
 
 // Upload multiple files using standard upload
-export async function uploadFiles(files: File[], user) {
+export async function uploadFiles(files: File[], user: any) {
   const uploadPromises = files.map(file => {
     const filePath = `${user.id}/${file.name}`;
     return supabase.storage

@@ -1,7 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { signOut } from "@/app/api/route"
+import { signOut } from "@/app/api/myRoute"
 
 export default async function AuthButton() {
   const supabase = createClient();

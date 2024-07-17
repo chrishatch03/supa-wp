@@ -11,7 +11,7 @@ export const VisionBoard = () => {
   const [editVision, setEditVision] = useState<boolean>(false);
   const [newDream, setNewDream] = useState<boolean>(false);
   const [editDream, setEditDream] = useState<boolean>(false);
-  const handleImageClick = (file) => {
+  const handleImageClick = (file: any) => {
     console.log(file);
     setSelectedImage(file);
   };
@@ -31,7 +31,7 @@ export const VisionBoard = () => {
           <div
             className={`grid grid-cols-3 auto-rows-fr gap-4 w-full h-full mt-4`}
           >
-            {visionBoardURLs.map((file) => (
+            {visionBoardURLs.map((file: any) => (
               <img
                 key={file.signedUrl}
                 src={file.signedUrl}
@@ -112,7 +112,7 @@ export const VisionBoard = () => {
               </p>
             </p>
             <div className="grid grid-cols-3 gap-4 mt-8">
-              {visionBoardURLs.map((file) => (<button onClick={() => setEditDream(file)}>{Image(file.signedUrl, file.goal_date, file.title, file)}</button>))}
+              {visionBoardURLs.map((file: any) => (<button onClick={() => setEditDream(file)}>{Image(file.signedUrl, file.goal_date, file.title, file)}</button>))}
             </div>
             <button
               className="border border-blue-900 rounded-md px-4 py-2 text-foreground mt-8"

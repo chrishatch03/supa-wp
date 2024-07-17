@@ -31,20 +31,6 @@ export const signIn = async (formData: FormData) => {
 export const signUp = async (formData: FormData) => {
   "use server";
 
-  // const origin = headers().get("origin");
-  // const email = formData.get("email") as string;
-  // const password = formData.get("password") as string;
-  // const supabase = createClient();
-
-  // const { error } = await supabase.auth.signUp({
-  //   email,
-  //   password,
-  //   options: {
-  //     emailRedirectTo: `${origin}/auth/callback`,
-
-  //   },
-  // });
-
   const origin = headers().get("origin");
   const firstName = formData.get("first_name") as string;
   const lastName = formData.get("last_name") as string;

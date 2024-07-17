@@ -6,20 +6,33 @@ import { useMyContext } from '@/contexts/Context';
 import { uploadFile } from '@/app/api/uploadFile';
 import { insertMetadata } from '@/app/api/updateFile';
 
+// Step 1: Define an interface for Metadata
+interface Metadata {
+  title?: string;
+  goal_date?: string;
+  id?: string;
+  notes?: string;
+  file_name?: string;
+}
+
+interface File {
+  name: string;
+}
+
 export default function NewDream({ setState } : { setState: Function }) {
   const { user, setRerenderVisionBoard } = useMyContext();
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
   const [notes, setNotes] = useState('');
 
-  const handleDrop = (event) => {
+  const handleDrop = (event: any) => {
     event.preventDefault();
     const droppedFile = event.dataTransfer.files[0];
     setFile(droppedFile);
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: any) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
   };
@@ -30,7 +43,7 @@ export default function NewDream({ setState } : { setState: Function }) {
       return;
     }
 
-    const metadata = {};
+    const metadata: Metadata = {};
     if (title) metadata.title = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     if (date) metadata.goal_date = date;
     if (user) metadata.id = user.id;

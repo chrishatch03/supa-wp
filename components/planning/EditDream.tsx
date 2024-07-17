@@ -5,6 +5,15 @@ import { useState, useEffect } from "react";
 import { useMyContext } from "@/contexts/Context";
 import { updateFile, updateMetadata, deleteDream } from "@/app/api/updateFile";
 
+// Step 1: Define an interface for Metadata
+interface Metadata {
+  title?: string;
+  goal_date?: string;
+  id?: string;
+  notes?: string;
+  file_name?: string;
+}
+
 export default function EditDream({
   setState,
   startFile,
@@ -35,13 +44,13 @@ export default function EditDream({
     setFileChanged(isChanged);
   }, [file, begFile]);
 
-  const handleDrop = (event) => {
+  const handleDrop = (event: any) => {
     event.preventDefault();
     const droppedFile = event.dataTransfer.files[0];
     setFile(droppedFile);
   };
 
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: any) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
   };
@@ -55,8 +64,8 @@ export default function EditDream({
       try {
         await updateFile(begFile.path,file, user);
         alert("File Save successfully!");
-        const metadata = {};
-        if (title) metadata.title = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        const metadata: Metadata = {};
+        if (title) metadata.title = title;
           if (date) metadata.goal_date = date;
           if (user) metadata.id = user.id;
           if (notes) metadata.notes = notes;
@@ -78,8 +87,8 @@ export default function EditDream({
 
     if (hasChanged) {
       try {
-        const metadata = {};
-          if (title) metadata.title = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        const metadata: Metadata = {};
+          if (title) metadata.title = title;
           if (date) metadata.goal_date = date;
           if (user) metadata.id = user.id;
           if (notes) metadata.notes = notes;
