@@ -13,9 +13,14 @@ export const metadata = {
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
+interface User {
+  name: string;
+  email: string;
+}
+
 type RootLayoutProps = {
   children: React.ReactNode;
-  initialUser: any;
+  initialUser: User;
 };
 
 export default function RootLayout({
