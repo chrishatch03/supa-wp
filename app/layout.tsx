@@ -13,10 +13,9 @@ export const metadata = {
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
-// Adjust the type definition to include initialUser
 type RootLayoutProps = {
   children: React.ReactNode;
-  initialUser: any; // Consider specifying a more precise type instead of 'any'
+  initialUser: any;
 };
 
 export default function RootLayout({
@@ -24,7 +23,6 @@ export default function RootLayout({
   initialUser,
 }: RootLayoutProps) {
   return (
-    // Pass initialUser to ContextProvider if it's needed there
     <ContextProvider initialUser={initialUser}> 
       <html lang="en" className={GeistSans.className}>
         <body className="bg-zinc-200 dark:bg-primary text-primary dark:text-white">
