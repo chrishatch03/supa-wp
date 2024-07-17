@@ -5,9 +5,9 @@ import { createClient } from "@/utils/supabase/client";
 
 const Context = createContext();
 
-const ContextProvider = ({ children, initialUser }) => {
+const ContextProvider = ({ children }) => {
   const supabase = createClient();
-  const [user, setUser] = useState(initialUser || null);
+  const [user, setUser] = useState( null);
   const [avatarURL, setAvatarURL] = useState(null);
   const [visionBoardURLs, setVisionBoardURLs] = useState([]);
   const [rerenderVisionBoard, setRerenderVisionBoard] = useState(false);
@@ -376,7 +376,7 @@ const ContextProvider = ({ children, initialUser }) => {
     };
 
     // If there is no initial user, fetch the user from the server
-    if (!initialUser) {
+    if (!user) {
       fetchUser();
     }
 
@@ -391,7 +391,7 @@ const ContextProvider = ({ children, initialUser }) => {
     return () => {
       authListener?.subscription.unsubscribe();
     };
-  }, [supabase, initialUser]);
+  }, [supabase, user]);
 
   return (
     <Context.Provider

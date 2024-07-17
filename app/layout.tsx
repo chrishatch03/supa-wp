@@ -13,22 +13,15 @@ export const metadata = {
   description: "The fastest way to build apps with Next.js and Supabase",
 };
 
-interface User {
-  name: string;
-  email: string;
-}
-
 type RootLayoutProps = {
   children: React.ReactNode;
-  initialUser: User;
 };
 
 export default function RootLayout({
   children,
-  initialUser,
 }: RootLayoutProps) {
   return (
-    <ContextProvider initialUser={initialUser}> 
+    <ContextProvider > 
       <html lang="en" className={GeistSans.className}>
         <body className="bg-zinc-200 dark:bg-primary text-primary dark:text-white">
           <main className="min-h-screen">

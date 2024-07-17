@@ -14,7 +14,7 @@ export default async function Index() {
     data: { user },
   } = await supabase.auth.getUser();
   return ( 
-    <ContextProvider initialUser={user}>
+    <ContextProvider >
       <div
         className="w-full h-full min-h-screen p-4 gap-4
           grid 
