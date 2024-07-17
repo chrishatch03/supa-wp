@@ -5,6 +5,8 @@ import { MyPlan } from "@/components/planning/MyPlan";
 import { RolesAndGoals } from "@/components/planning/RolesAndGoals";
 import { MissionStatement } from "@/components/planning/MissionStatement";
 import { VisionBoard } from "@/components/planning/VisionBoard";
+import Notes from "@/components/planning/Notes";
+import ScriptureStudy from "@/components/planning/ScriptureStudy";
 
 export default async function PlanPage() {
   const supabase = createClient();
@@ -51,8 +53,7 @@ export default async function PlanPage() {
             min-h-empty md:row-span-2
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
-        >
-        </div>
+        ><ScriptureStudy /></div>
         <div className='w-full h-full ring-1 rounded-3xl
             min-h-empty md:col-span-2 md:col-start-2 md:row-span-2 md:row-start-2
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
@@ -68,7 +69,7 @@ export default async function PlanPage() {
             
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
-        >7</div>
+        ><Notes /></div>
     </div>
     </>
   );

@@ -13,15 +13,7 @@ const ContextProvider = ({ children, initialUser }) => {
   const [rerenderVisionBoard, setRerenderVisionBoard] = useState(false);
 
 
-  // const getMetadata = async (userID) => {
-  //   const { data: metadata, error: metadataError } = await supabase
-  //     .from("image_metadata")
-  //     .select()
-  //     .eq("id", userID); // Corrected to use dbColumnName
-  //   console.log(metadata)
-  //   console.log(userID)
-  //   return metadata
-  // }
+
 
   useEffect(() => {
     const fetchVisionBoardURLs = async () => {
@@ -121,6 +113,8 @@ const ContextProvider = ({ children, initialUser }) => {
   const [roles, setRoles] = useState([]);
   const [goals, setGoals] = useState([]);
   const [missionStatement, setMissionStatement] = useState([]);
+  const [scriptureStudy, setScriptureStudy] = useState([]);
+  const [notes, setNotes] = useState('');
 
   const getList = async (dbColumnName, userID) => {
     let { data: list, error } = await supabase
@@ -137,11 +131,44 @@ const ContextProvider = ({ children, initialUser }) => {
         // console.log(`Roles: ${roles}`);
       } else if (dbColumnName === "goals") {
         setGoals(list[0][dbColumnName].items);
+      } else if (dbColumnName === 'scripture_study') {
+        setScriptureStudy(list[0][dbColumnName].items);
       } else if (dbColumnName === "mission_statement") {
         setMissionStatement(list[0][dbColumnName].items);
       }
     }
   };
+
+  const getNotes = async () => {
+    let { data: notes, error } = await supabase
+      .from("planner")
+      .select("notes")
+      .eq("id", user.id);
+      // console.log(notes);
+      if (notes && notes.length > 0) {
+        return setNotes(notes[0].notes)
+      }
+  }
+  const updateNotes = async (newNotes) => {
+    let { data: updatedNotes, error } = await supabase
+      .from("planner")
+      .update({ notes: newNotes })
+      .eq("id", user.id);
+      // console.log(updatedNotes[0].notes);
+      if (error) {
+        console.error("Error updating notes:", error);
+        return;
+      }
+      if (updatedNotes && updatedNotes.length > 0) {
+        return setNotes(updatedNotes[0].notes)
+      }
+  }
+
+  useEffect(() => {
+    if (user) {
+      getNotes();
+    }
+  }, [user, updateNotes]);
 
   const handleAddItem = async (formData, event, dbColumnName, userID) => {
     if (dbColumnName === "mission_statement") {
@@ -202,6 +229,8 @@ const ContextProvider = ({ children, initialUser }) => {
             setRoles(updatedData[0][dbColumnName].items);
           } else if (dbColumnName === "goals") {
             setGoals(updatedData[0][dbColumnName].items);
+          } else if (dbColumnName === "scripture_study") {
+            setScriptureStudy(updatedData[0][dbColumnName].items);
           } else if (dbColumnName === "mission_statement") {
             setMissionStatement(updatedData[0][dbColumnName].items);
           }
@@ -268,6 +297,8 @@ const ContextProvider = ({ children, initialUser }) => {
           setRoles(updatedData[0][dbColumnName].items);
         } else if (dbColumnName === "goals") {
           setGoals(updatedData[0][dbColumnName].items);
+        } else if (dbColumnName === "scripture_study") {
+          setScriptureStudy(updatedData[0][dbColumnName].items);
         }
       } else {
         console.error(
@@ -325,6 +356,8 @@ const ContextProvider = ({ children, initialUser }) => {
         setGoals(updatedData[0][dbColumnName].items);
       } else if (dbColumnName === "mission_statement") {
         setMissionStatement(updatedData[0][dbColumnName].items);
+      } else if (dbColumnName === "scripture_study") {
+        setScriptureStudy(updatedData[0][dbColumnName].items);
       }
     } else {
       console.error("Updated data is not in the expected format or is empty.");
@@ -375,8 +408,13 @@ const ContextProvider = ({ children, initialUser }) => {
         setRoles,
         goals,
         setGoals,
+        scriptureStudy,
+        setScriptureStudy,
         missionStatement,
         setMissionStatement,
+        notes,
+        setNotes,
+        updateNotes,
         handleAddItem,
         handleDeleteItem,
         getList,

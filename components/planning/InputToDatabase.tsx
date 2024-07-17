@@ -31,16 +31,16 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
   };
 
   return (
-    <div className="mt-10 w-full bg-primary dark:bg-white rounded-xl p-4 flex flex-col justify-center items-center gap-4">
+    <div className="h-16 mt-10 w-full bg-primary/15 dark:bg-white/70 rounded-2xl p-4 flex flex-col justify-center items-center">
       <form
-        className="flex flex-row w-full justify-between gap-2 text-primary"
+        className="flex flex-row w-full justify-between items-center text-primary"
         onSubmit={handleSubmit} // handleSubmit uses handleAddItem from context for form submission
       >
         {/* One or two input fields to handle different form data */}
         {dbColumnName === "mission_statement" ? (
           <>
             <input
-              className="rounded-lg px-4 border"
+              className="h-full px-4 appearance-none bg-transparent w-full text-gray-700 mr-3 py-1 leading-tight focus:outline-none border-b border-white dark:border-primary"
               type="text"
               name="firstItem"
               placeholder="••••••••"
@@ -48,7 +48,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
               onChange={(e) => setFirstInputValue(e.target.value)}
             />
             <input
-              className="rounded-lg px-4 border"
+              className="h-full px-4 appearance-none bg-transparent w-full text-gray-700 mr-3 py-1 leading-tight focus:outline-none border-1 border-b border-white dark:border-primary"
               type="text"
               name="secondItem"
               placeholder="••••••••"
@@ -58,7 +58,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
           </>
           ) : (
             <input
-              className="rounded-lg px-4 border"
+              className="h-full px-4 appearance-none bg-transparent w-full text-gray-700 mr-3 py-1 leading-tight focus:outline-none border-b border-white dark:border-primary"
               type="text"
               name="firstItem"
               placeholder="••••••••"
@@ -67,7 +67,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
             />
           )}
         <SubmitButton
-          className="border border-white dark:border-primary rounded-lg px-4 py-2 text-white dark:text-primary mb-2"
+          className="border border-white dark:border-primary rounded-lg px-4 py-2 text-white dark:text-primary"
           pendingText="..."
         >
           +

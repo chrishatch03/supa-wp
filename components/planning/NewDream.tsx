@@ -31,7 +31,7 @@ export default function NewDream({ setState } : { setState: Function }) {
     }
 
     const metadata = {};
-    if (title) metadata.title = title;
+    if (title) metadata.title = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
     if (date) metadata.goal_date = date;
     if (user) metadata.id = user.id;
     if (notes) metadata.notes = notes;

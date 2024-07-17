@@ -9,7 +9,7 @@ import {
 import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 export const List = ({dbColumnName}: {dbColumnName: string}) => {
-  const { user, getList, handleDeleteItem, checklistItems, roles, goals, missionStatement } = useMyContext();
+  const { user, getList, handleDeleteItem, checklistItems, roles, goals, missionStatement, scriptureStudy } = useMyContext();
   const [openItemId, setOpenItemId] = useState<number | null>(null);
   
   useEffect(() => {
@@ -28,6 +28,8 @@ export const List = ({dbColumnName}: {dbColumnName: string}) => {
     selectedColumnItems = roles;
   } else if (dbColumnName === "goals") {
     selectedColumnItems = goals;
+  } else if (dbColumnName === 'scripture_study') {
+    selectedColumnItems = scriptureStudy;
   } else if (dbColumnName === "mission_statement") {
     selectedColumnItems = missionStatement;
     // Return JSX markup for Mission Statement
@@ -120,7 +122,12 @@ export const List = ({dbColumnName}: {dbColumnName: string}) => {
                 {selectedColumnItems &&
                   selectedColumnItems.map(({ id, item }: {id:number, item:string}) => (
                     <div key={id} className="flex flex-row justify-between">
+                      <div className="flex">
+                        <div className="mr-8">
+                          {'\u2022'}
+                        </div>
                       {`${item}`}
+                      </div>
                       <button onClick={() => setOpenItemId(id)}>Delete</button>
                       <Dialog
                         open={openItemId === id}

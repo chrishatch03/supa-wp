@@ -20,7 +20,7 @@ export const VisionBoard = () => {
   
   
   return (
-    <div className="bg-pbbgIR bg-cover  flex flex-col justify-between items-center rounded-3xl p-8 overflow-hidden text-center lg:text-left">
+    <div className="flex flex-col justify-between items-center rounded-3xl p-8 overflow-hidden text-center lg:text-left">
       <div>
         <p className="ext-xl tracking-tight font-medium text-primary dark:text-white md:text-6xl">
           VISION BOARD
@@ -61,7 +61,7 @@ export const VisionBoard = () => {
       {selectedImage && (
         <div className="fixed top-0 left-0 w-screen h-screen bg-gray-400 bg-opacity-50 flex justify-center items-center">
           <div className="flex flex-col items-center justify-center w-auto h-auto p-8 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick">
-            <h1 className="text-2xl font-medium text-primary dark:text-white">
+            <h1 className="text-2xl font-bold text-primary dark:text-white">
               {selectedImage.title ? (selectedImage.title) : ("Dream Name")}
             </h1>
             {/* DISPLAY CURRENTLY SELECTED IMAGE */}
@@ -102,7 +102,7 @@ export const VisionBoard = () => {
 
       {/* VISION EDITOR */}
       {editVision && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-gray-400 bg-opacity-50 flex justify-center items-center">
+        <div className="fixed top-0 left-0 w-screen h-screen bg-gray-400 bg-opacity-50 flex justify-center items-center shadow-xl">
           <div className='flex flex-col items-center overflow-y-auto w-full h-full p-20'>
           <div className="flex flex-col relative items-center justify-center w-1/2 h-auto p-8 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-2xl dark:shadow-thick">
             <p className="text-xl font-medium text-primary dark:text-white">
@@ -111,7 +111,7 @@ export const VisionBoard = () => {
               –Aristotle.
               </p>
             </p>
-            <div className="grid grid-cols-3 gap-2 mt-8">
+            <div className="grid grid-cols-3 gap-4 mt-8">
               {visionBoardURLs.map((file) => (<button onClick={() => setEditDream(file)}>{Image(file.signedUrl, file.goal_date, file.title, file)}</button>))}
             </div>
             <button
@@ -121,10 +121,10 @@ export const VisionBoard = () => {
               Create New Dream
             </button>
             <button
-              className="border border-blue-900 rounded-md px-4 py-2 text-foreground absolute top-5 right-5"
+              className="absolute top-2 right-2 border border-red-500 rounded-full px-3 py-1 text-red-500"
               onClick={() => {setEditVision(false), setSelectedImage(null)}}
             >
-              Close
+              X
             </button>
           </div>
           </div>
@@ -147,8 +147,8 @@ export const VisionBoard = () => {
 
 function Image(signedUrl: string, dueDate: string, title: string, file: any) {
   return (
-    <div className="relative group p-2 rounded-xl bg-slate-200 shadow-lg">
-      <div className="flex aspect-square w-full overflow-hidden rounded-lg bg-gray-200">
+    <div className="relative group rounded-xl bg-gray-100 shadow-xl">
+      <div className="flex aspect-square w-full overflow-hidden rounded-t-xl bg-blue-100">
         {signedUrl ? (
           <img
             src={signedUrl}
@@ -163,15 +163,19 @@ function Image(signedUrl: string, dueDate: string, title: string, file: any) {
           />
         )}
       </div>
-      {dueDate ? (
-      <h3 className="mt-4 text-sm text-gray-700">By: {dueDate}</h3>
-        ) : (
-          <h3 className="mt-4 text-sm text-gray-700">By: Due Date</h3>
-        )}
       {title ? (
-      <p className="mt-1 text-lg font-medium text-gray-900">{title}</p>
+      <h3 className="mt-4 text-lg font-bold text-gray-70 pb-4">{title}</h3>
         ) : (
-          <p className="mt-1 text-lg font-medium text-gray-900">Title</p>
+          <h3 className="mt-4 text-lg font-bold text-gray-700 pb-4">Title</h3>
+        )}
+      {dueDate ? (
+            <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">By: {dueDate}</span>
+
+      // <p className="mt-1 text-lg font-medium text-gray-900 pb-2">{title}</p>
+        ) : (
+          <span className="inline-block bg-gray-200 rounded-full px-3 py-1 text-sm font-semibold text-gray-700 mr-2 mb-2">By: Due Date</span>
+
+          // <p className="mt-1 text-lg font-medium text-gray-900 pb-2">Title</p>
         )}
     </div>
   );
