@@ -7,13 +7,38 @@ const Context = createContext();
 
 const ContextProvider = ({ children }) => {
   const supabase = createClient();
-  const [user, setUser] = useState( null);
+  const [user, setUser] = useState(null);
   const [avatarURL, setAvatarURL] = useState(null);
   const [visionBoardURLs, setVisionBoardURLs] = useState([]);
   const [rerenderVisionBoard, setRerenderVisionBoard] = useState(false);
 
+  useEffect(() => {
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (event === "SIGNED_IN" && session) {
+          setUser(session.user);
 
+          // Optionally, fetch additional user info here
+          // For example, fetching the avatar URL
+          // const { data: profile } = await supabase
+          //   .from('profiles')
+          //   .select('avatar_url')
+          //   .eq('id', session.user.id)
+          //   .single();
+          // setAvatarURL(profile.avatar_url);
 
+          // Similarly, fetch vision board URLs if needed
+          // setVisionBoardURLs([...]);
+        } else if (event === "SIGNED_OUT") {
+          setUser(null);
+          setAvatarURL(null);
+          setVisionBoardURLs([]);
+        }
+      }
+    );
+
+    
+  }, []);
 
   useEffect(() => {
     const fetchVisionBoardURLs = async () => {
@@ -37,7 +62,6 @@ const ContextProvider = ({ children }) => {
       let finSignedURLs = [];
       // console.log(signedURLs)
 
-      
       if (signedURLs[0].error) {
         setVisionBoardURLs([
           "/default-avatar.png",
@@ -46,10 +70,10 @@ const ContextProvider = ({ children }) => {
         ]);
       } else if (signedURLs) {
         const { data: metadata, error: metadataError } = await supabase
-        .from("image_metadata")
-        .select()
-        .eq("id", user.id); // Corrected to use dbColumnName
-        
+          .from("image_metadata")
+          .select()
+          .eq("id", user.id); // Corrected to use dbColumnName
+
         if (metadataError) {
           console.error("Error fetching metadata:", metadataError);
           return;
@@ -59,7 +83,9 @@ const ContextProvider = ({ children }) => {
         if (signedURLs && metadata) {
           finSignedURLs = signedURLs.map((urlItem) => {
             // Find the corresponding metadata item
-            const metadataItem = metadata.find((metaItem) => `${metaItem.file_name}` === urlItem.path);
+            const metadataItem = metadata.find(
+              (metaItem) => `${metaItem.file_name}` === urlItem.path
+            );
             // Return a new object combining the URL and any relevant metadata
             return {
               signedUrl: urlItem.signedUrl,
@@ -76,7 +102,6 @@ const ContextProvider = ({ children }) => {
           // Now you can set the vision board URLs with the newly created finSignedURLs array
           setRerenderVisionBoard(false);
           return setVisionBoardURLs(finSignedURLs);
-
         }
       }
     };
@@ -114,7 +139,7 @@ const ContextProvider = ({ children }) => {
   const [goals, setGoals] = useState([]);
   const [missionStatement, setMissionStatement] = useState([]);
   const [scriptureStudy, setScriptureStudy] = useState([]);
-  const [notes, setNotes] = useState('');
+  const [notes, setNotes] = useState("");
 
   const getList = async (dbColumnName, userID) => {
     let { data: list, error } = await supabase
@@ -131,7 +156,7 @@ const ContextProvider = ({ children }) => {
         // console.log(`Roles: ${roles}`);
       } else if (dbColumnName === "goals") {
         setGoals(list[0][dbColumnName].items);
-      } else if (dbColumnName === 'scripture_study') {
+      } else if (dbColumnName === "scripture_study") {
         setScriptureStudy(list[0][dbColumnName].items);
       } else if (dbColumnName === "mission_statement") {
         setMissionStatement(list[0][dbColumnName].items);
@@ -144,25 +169,25 @@ const ContextProvider = ({ children }) => {
       .from("planner")
       .select("notes")
       .eq("id", user.id);
-      // console.log(notes);
-      if (notes && notes.length > 0) {
-        return setNotes(notes[0].notes)
-      }
-  }
+    // console.log(notes);
+    if (notes && notes.length > 0) {
+      return setNotes(notes[0].notes);
+    }
+  };
   const updateNotes = async (newNotes) => {
     let { data: updatedNotes, error } = await supabase
       .from("planner")
       .update({ notes: newNotes })
       .eq("id", user.id);
-      // console.log(updatedNotes[0].notes);
-      if (error) {
-        console.error("Error updating notes:", error);
-        return;
-      }
-      if (updatedNotes && updatedNotes.length > 0) {
-        return setNotes(updatedNotes[0].notes)
-      }
-  }
+    // console.log(updatedNotes[0].notes);
+    if (error) {
+      console.error("Error updating notes:", error);
+      return;
+    }
+    if (updatedNotes && updatedNotes.length > 0) {
+      return setNotes(updatedNotes[0].notes);
+    }
+  };
 
   useEffect(() => {
     if (user) {
