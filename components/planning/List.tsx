@@ -14,7 +14,11 @@ export const List = ({dbColumnName}: {dbColumnName: string}) => {
   const [openItemId, setOpenItemId] = useState<number | null>(null);
   const [edit, setEdit] = useState<boolean>(false);
   const [position, setPosition] = useState<string>('top-0');
-  
+  useEffect(() => {
+    if (user) {
+      getList(dbColumnName, user.id);
+    }
+  }, []);
   useEffect(() => {
     if (user) {
       getList(dbColumnName, user.id);

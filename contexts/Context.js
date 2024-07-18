@@ -8,7 +8,7 @@ const Context = createContext();
 
 const ContextProvider = ({ children }) => {
   const supabase = createClient();
-  const { user } = useAuth();
+  const { user, setAuthPageTouch } = useAuth();
   const [avatarURL, setAvatarURL] = useState(null);
   const [checklistItems, setChecklistItems] = useState([]);
   const [roles, setRoles] = useState([]);
@@ -19,7 +19,7 @@ const ContextProvider = ({ children }) => {
   const [missionStatement, setMissionStatement] = useState([]);
   const [notes, setNotes] = useState("");
 
-  // RE-FETCH DATA ON PAGE RELOAD
+  // FETCH DATA ON PAGE LOAD AND RELOAD
   useEffect(() => {
     const handlePageReload = async () => {
       if (user) {
@@ -124,6 +124,24 @@ const ContextProvider = ({ children }) => {
       setAvatarURL(data.signedUrl);
       return;
     }
+  };
+
+  const updateAvatar = async (file) => {
+    if (!user || !user.id) return;
+
+    const basePath = `${user.id}/`; // Assuming the user's UID is used as a directory name
+    const path = `${basePath}avatar`; // Adjusted to include the UID directory
+    const { data, error } = await supabase.storage
+      .from("avatars")
+      .upload(path, file);
+
+    if (error) {
+      console.error("Error uploading avatar:", error);
+      return;
+    }
+
+    // Update the avatar URL in the state
+    setAvatarURL(data.signedUrl);
   };
 
   const getList = async (dbColumnName, userID) => {
@@ -786,6 +804,7 @@ const ContextProvider = ({ children }) => {
     <Context.Provider
       value={{
         user,
+        setAuthPageTouch,
         // setUser,
         avatarURL,
         visionBoardURLs,

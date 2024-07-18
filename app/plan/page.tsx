@@ -19,8 +19,11 @@ export default async function PlanPage() {
     return redirect("/login");
   }
 
+
+  
   return (
     <>
+    {/* <AuthPageTouch /> */}
     <div className='w-full h-full min-h-screen p-4 gap-4
         grid 
         grid-cols-1

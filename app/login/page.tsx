@@ -4,14 +4,19 @@ import { SubmitButton } from "./submit-button";
 import { NavBar } from "@/components/NavBar";
 import { signIn, signUp } from "@/app/api/myRoute";
 import { useState } from "react";
+import { useAuth } from "@/contexts/AuthContext";
 
-export default function Signup({
+export default function Login({
   searchParams,
 }: {
   searchParams: { message: string };
 }) {
   const [authFunc, setAuthFunc] = useState("signin");
-
+  const { setAuthenticated } = useAuth()
+  const handleSignIn = async (formData: FormData) => {
+    setAuthenticated(true);
+    signIn(formData);
+  }
   return (
     <div
       className="w-full h-full min-h-screen p-4 gap-4
@@ -85,7 +90,7 @@ export default function Signup({
                 required
               />
               <SubmitButton
-                formAction={signIn}
+                formAction={handleSignIn}
                 className="bg-green-700 rounded-md px-4 py-2 text-foreground mb-2"
                 pendingText="Signing In..."
               >

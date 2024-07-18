@@ -5,12 +5,15 @@ import { signOut } from "@/app/api/myRoute";
 import Link from "next/link";
 import { useMyContext } from "@/contexts/Context";
 import { Avatar } from "@/components/Avatar";
+import { useAuth } from "@/contexts/AuthContext";
 
 export const NavBar = () => {
-  const { user, avatarURL } = useMyContext();
+  // const { user, avatarURL } = useMyContext();
+  const { user, setAuthenticated } = useAuth();
   const [navOpen, setNavOpen] = useState(false);
 
   return (
+    
     <>
       <button onClick={() => setNavOpen(!navOpen)} className={`z-10 ${navOpen ? "hidden" : ""} absolute top-8 right-8 flex flex-col items-center border-2 border-primary dark:border-white h-12 w-12 rounded-xl text-4xl`}>
         ☰
@@ -21,9 +24,7 @@ export const NavBar = () => {
             <div className="flex flex-row justify-end max-h-10">
               {user ? (
                 <div className="flex items-center gap-4 min-w-fit">
-                  <form action={signOut}>
-                    <button className="py-2 px-4 rounded-md no-underline bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover">Logout</button>
-                  </form>
+                    <button onClick={async () => {setAuthenticated(false);signOut()}} className="py-2 px-4 rounded-md no-underline bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover">Logout</button>
                   <Avatar />
                 </div>
               ) : (
