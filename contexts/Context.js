@@ -39,65 +39,80 @@ const ContextProvider = ({ children }) => {
 
   const fetchVisionBoardURLs = async () => {
     if (!user || !user.id) return;
-
-    let folderName = `${user.id}`; // Assuming the user's UID is used as a directory name
-    const { data: visionBoardFiles, error: visionBoardFilesError } =
-      await supabase.storage.from("visionBoard").list(folderName);
-
-    let visionFiles = [];
-    if (visionBoardFiles) {
-      visionFiles = visionBoardFiles.map((file) => {
-        return `${folderName}/${file.name}`;
-      });
+    // check for a folder in storage with the user's id
+    const { data, error } = await supabase
+        .storage
+        .from('visionBoard')
+        .list(user.id, { limit: 1 })
+    
+    if (error) {
+        console.error('Error checking folder:', error)
+        return false
     }
 
-    const { data: signedURLs, error: signedURLsError } = await supabase.storage
-      .from("visionBoard")
-      .createSignedUrls(visionFiles, 3600);
-    let finSignedURLs = [];
-    // console.log(signedURLs)
+    // If data is not empty, the folder exists
+    if (data.length > 0) {
+      let folderName = `${user.id}`; // Assuming the user's UID is used as a directory name
+      const { data: visionBoardFiles, error: visionBoardFilesError } =
+        await supabase.storage.from("visionBoard").list(folderName);
 
-    if (signedURLs[0].error) {
-      setVisionBoardURLs([
-        "/default-avatar.png",
-        "/default-avatar.png",
-        "/default-avatar.png",
-      ]);
-    } else if (signedURLs) {
-      const { data: metadata, error: metadataError } = await supabase
-        .from("image_metadata")
-        .select()
-        .eq("id", user.id); // Corrected to use dbColumnName
-
-      if (metadataError) {
-        console.error("Error fetching metadata:", metadataError);
-        return;
-      }
-      // console.log(metadata)
-
-      if (signedURLs && metadata) {
-        finSignedURLs = signedURLs.map((urlItem) => {
-          // Find the corresponding metadata item
-          const metadataItem = metadata.find(
-            (metaItem) => `${metaItem.file_name}` === urlItem.path
-          );
-          // Return a new object combining the URL and any relevant metadata
-          return {
-            signedUrl: urlItem.signedUrl,
-            // Include any other metadata properties you need, for example:
-            title: metadataItem?.title,
-            goal_date: metadataItem?.goal_date,
-            notes: metadataItem?.notes,
-            path: urlItem.path,
-            name: urlItem.path.split("/")[1],
-            // Add more fields as needed
-          };
+      let visionFiles = [];
+      if (visionBoardFiles) {
+        visionFiles = visionBoardFiles.map((file) => {
+          return `${folderName}/${file.name}`;
         });
-        // console.log(finSignedURLs);
-        // Now you can set the vision board URLs with the newly created finSignedURLs array
-        setRerenderVisionBoard(false);
-        return setVisionBoardURLs(finSignedURLs);
       }
+
+      const { data: signedURLs, error: signedURLsError } = await supabase.storage
+        .from("visionBoard")
+        .createSignedUrls(visionFiles, 3600);
+      let finSignedURLs = [];
+      // console.log(signedURLs)
+
+      if (signedURLs[0].error) {
+        setVisionBoardURLs([
+          "/default-avatar.png",
+          "/default-avatar.png",
+          "/default-avatar.png",
+        ]);
+      } else if (signedURLs) {
+        const { data: metadata, error: metadataError } = await supabase
+          .from("image_metadata")
+          .select()
+          .eq("id", user.id); // Corrected to use dbColumnName
+
+        if (metadataError) {
+          console.error("Error fetching metadata:", metadataError);
+          return;
+        }
+        // console.log(metadata)
+
+        if (signedURLs && metadata) {
+          finSignedURLs = signedURLs.map((urlItem) => {
+            // Find the corresponding metadata item
+            const metadataItem = metadata.find(
+              (metaItem) => `${metaItem.file_name}` === urlItem.path
+            );
+            // Return a new object combining the URL and any relevant metadata
+            return {
+              signedUrl: urlItem.signedUrl,
+              // Include any other metadata properties you need, for example:
+              title: metadataItem?.title,
+              goal_date: metadataItem?.goal_date,
+              notes: metadataItem?.notes,
+              path: urlItem.path,
+              name: urlItem.path.split("/")[1],
+              // Add more fields as needed
+            };
+          });
+          // console.log(finSignedURLs);
+          // Now you can set the vision board URLs with the newly created finSignedURLs array
+          setRerenderVisionBoard(false);
+          return setVisionBoardURLs(finSignedURLs);
+        }
+      }
+    } else {
+      console.log('No vision board folder found for user')
     }
   };
 
@@ -133,7 +148,7 @@ const ContextProvider = ({ children }) => {
     const path = `${basePath}avatar`; // Adjusted to include the UID directory
     const { data, error } = await supabase.storage
       .from("avatars")
-      .upload(path, file);
+      .update(path, file);
 
     if (error) {
       console.error("Error uploading avatar:", error);
@@ -141,7 +156,7 @@ const ContextProvider = ({ children }) => {
     }
 
     // Update the avatar URL in the state
-    setAvatarURL(data.signedUrl);
+    fetchAvatarURL();
   };
 
   const getList = async (dbColumnName, userID) => {
@@ -807,6 +822,7 @@ const ContextProvider = ({ children }) => {
         setAuthPageTouch,
         // setUser,
         avatarURL,
+        updateAvatar,
         visionBoardURLs,
         rerenderVisionBoard,
         setRerenderVisionBoard,

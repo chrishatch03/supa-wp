@@ -43,7 +43,7 @@ export const VisionBoard = () => {
           </div>
         ) : (
           <div className="flex justify-center items-center w-full h-full mt-4">
-            <span className="text-xl text-gray-500">Add a Dream</span>
+            <button onClick={() => setNewDream(true)} className="text-xl text-gray-500">Add a Dream</button>
           </div>
         )}
         <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
