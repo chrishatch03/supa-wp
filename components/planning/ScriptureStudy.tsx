@@ -5,7 +5,7 @@ import { InputToDatabase } from "./InputToDatabase";
 const ScriptureStudy = () => {
   return (
     <div className="p-4 flex flex-col items-center">
-      <div>
+      <div className="mb-4 md:mb-auto">
         <p className="text-xl text-primary dark:text-white lg:text-7xl tracking-tight">
           STORIES OF JESUS!
         </p>

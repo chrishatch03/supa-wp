@@ -12,33 +12,55 @@ const ContextProvider = ({ children }) => {
   const [visionBoardURLs, setVisionBoardURLs] = useState([]);
   const [rerenderVisionBoard, setRerenderVisionBoard] = useState(false);
 
-  useEffect(() => {
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (event === "SIGNED_IN" && session) {
-          setUser(session.user);
-
-          // Optionally, fetch additional user info here
-          // For example, fetching the avatar URL
-          // const { data: profile } = await supabase
-          //   .from('profiles')
-          //   .select('avatar_url')
-          //   .eq('id', session.user.id)
-          //   .single();
-          // setAvatarURL(profile.avatar_url);
-
-          // Similarly, fetch vision board URLs if needed
-          // setVisionBoardURLs([...]);
-        } else if (event === "SIGNED_OUT") {
-          setUser(null);
-          setAvatarURL(null);
-          setVisionBoardURLs([]);
+    // Load user data on initial load
+    useEffect(() => {
+      const { data: authListener } = supabase.auth.onAuthStateChange(
+        async (event, session) => {
+          if (event === "SIGNED_IN" && session) {
+            setUser(session.user);
+            await fetchAvatarURL();
+            await getList("checklist_items", session.user.id);
+            await getList("roles", session.user.id);
+            await getList("goals", session.user.id);
+            await fetchVisionBoardURLs();
+            await getList("scripture_study", session.user.id);
+            await getList("mission_statement", session.user.id);
+            await getNotes();
+            
+          } else if (event === "SIGNED_OUT") {
+            setUser(null);
+            setAvatarURL(null);
+            setVisionBoardURLs([]);
+            setChecklistItems([]);
+            setRoles([]);
+            setGoals([]);
+            setMissionStatement([]);
+            setScriptureStudy([]);
+          }
         }
-      }
-    );
-
-    
-  }, []);
+      );
+      authListener.subscription.unsubscribe();
+  
+    }, []);
+    // RE-FETCH DATA ON PAGE RELOAD
+    useEffect(() => {
+      const handlePageReload = async () => {
+        const { user } = await supabase.auth.getUser();
+        if (user) {
+          setUser(user);
+          await fetchVisionBoardURLs();
+          await fetchAvatarURL();
+          await getList("checklist_items", user.id);
+          await getList("roles", user.id);
+          await getList("goals", user.id);
+          await getList("mission_statement", user.id);
+          await getList("scripture_study", user.id);
+          await getNotes();
+        }
+      };
+  
+      handlePageReload();
+    }, []);
 
   useEffect(() => {
     const fetchVisionBoardURLs = async () => {

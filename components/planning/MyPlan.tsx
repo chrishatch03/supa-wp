@@ -31,13 +31,15 @@ export const MyPlan = () => {
               </p>
             </div>
           </div>
-          <p className="text-3xl mt-6 font-medium lg:text-4xl tracking-tight text-primary dark:text-white">
-            This week
-          </p>
-          {/* Checklist */}
-          <List dbColumnName="checklist_items" />
-          {/* Add to Checklist */}
-          <InputToDatabase dbColumnName="checklist_items" />
+          <div className="">
+            <p className="text-3xl mt-6 mb-4 md:mb-auto font-medium lg:text-4xl tracking-tight text-primary dark:text-white">
+              This week
+            </p>
+            {/* Checklist */}
+            <List dbColumnName="checklist_items" />
+            {/* Add to Checklist */}
+            <InputToDatabase dbColumnName="checklist_items" />
+          </div>
         </div>
       )}
     </>
