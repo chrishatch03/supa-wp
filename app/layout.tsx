@@ -1,6 +1,7 @@
 import React from 'react'; // Ensure React is imported when using JSX
 import { GeistSans } from "geist/font/sans";
 import "./globals.css";
+import { AuthProvider } from '@/contexts/AuthContext';
 import { ContextProvider } from "@/contexts/Context";
 
 const defaultUrl = process.env.VERCEL_URL
@@ -21,14 +22,16 @@ export default function RootLayout({
   children,
 }: RootLayoutProps) {
   return (
-    <ContextProvider > 
-      <html lang="en" className={GeistSans.className}>
-        <body className="bg-zinc-200 dark:bg-primary text-primary dark:text-white">
-          <main className="min-h-screen">
-            {children}
-          </main>
-        </body>
-      </html>
-    </ContextProvider>
+    <AuthProvider >
+      <ContextProvider > 
+        <html lang="en" className={GeistSans.className}>
+          <body className="bg-zinc-200 dark:bg-primary text-primary dark:text-white">
+            <main className="min-h-screen">
+              {children}
+            </main>
+          </body>
+        </html>
+      </ContextProvider>
+    </AuthProvider>
   );
 }

@@ -12,10 +12,10 @@ export const NavBar = () => {
 
   return (
     <>
-      <button onClick={() => setNavOpen(!navOpen)} className={`${navOpen ? "hidden" : ""} absolute top-8 right-8 flex flex-col items-center border-2 border-primary dark:border-white h-12 w-12 rounded-xl text-4xl`}>
+      <button onClick={() => setNavOpen(!navOpen)} className={`z-10 ${navOpen ? "hidden" : ""} absolute top-8 right-8 flex flex-col items-center border-2 border-primary dark:border-white h-12 w-12 rounded-xl text-4xl`}>
         ☰
       </button>
-      <nav id="navBar" className={`${navOpen ? "" : "hidden"} absolute top-0 right-0 w-1/4 flex justify-center h-full backdrop-blur-md`}>
+      <nav id="navBar" className={`z-10 ${navOpen ? "" : "hidden"} absolute top-0 right-0 w-1/4 flex justify-center h-full backdrop-blur-md`}>
         <div className="w-full flex flex-col h-full justify-start ">
           <div className="w-full max-w-4xl flex p-3 text-sm h-16 border-b border-b-primary dark:border-b-white">
             <div className="flex flex-row justify-end max-h-10">
