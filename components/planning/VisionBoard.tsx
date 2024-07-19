@@ -27,7 +27,7 @@ export const VisionBoard = () => {
         </p>
 
         {/* COMPACT DISPLAY IMAGES */}
-        {visionBoardURLs && visionBoardURLs.length > 0 ? (
+        {visionBoardURLs.length > 0 && visionBoardURLs.length > 0 ? (
           <div
             className={`grid grid-cols-3 auto-rows-fr gap-4 w-full h-full mt-4`}
           >
@@ -112,7 +112,7 @@ export const VisionBoard = () => {
               </p>
             </p>
             <div className="grid grid-cols-3 gap-4 mt-8">
-              {visionBoardURLs.map((file: any) => (<button onClick={() => setEditDream(file)}>{Image(file.signedUrl, file.goal_date, file.title, file)}</button>))}
+              {visionBoardURLs.length > 0 && (visionBoardURLs.map((file: any) => (<button onClick={() => setEditDream(file)}>{Image(file.signedUrl, file.goal_date, file.title, file)}</button>)))}
             </div>
             <button
               className="border border-blue-900 rounded-md px-4 py-2 text-foreground mt-8"

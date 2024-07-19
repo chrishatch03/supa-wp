@@ -35,7 +35,7 @@ const ContextProvider = ({ children }) => {
     };
 
     handlePageReload();
-  }, [user]);
+  }, []);
 
   const fetchVisionBoardURLs = async () => {
     if (!user || !user.id) return;
@@ -51,7 +51,7 @@ const ContextProvider = ({ children }) => {
     }
 
     // If data is not empty, the folder exists
-    if (data.length > 0) {
+    if (data.length > 0 && data !== null) {
       let folderName = `${user.id}`; // Assuming the user's UID is used as a directory name
       const { data: visionBoardFiles, error: visionBoardFilesError } =
         await supabase.storage.from("visionBoard").list(folderName);
@@ -69,7 +69,7 @@ const ContextProvider = ({ children }) => {
       let finSignedURLs = [];
       // console.log(signedURLs)
 
-      if (signedURLs[0].error) {
+      if (signedURLs && signedURLs[0].error) {
         setVisionBoardURLs([
           "/default-avatar.png",
           "/default-avatar.png",
@@ -112,7 +112,9 @@ const ContextProvider = ({ children }) => {
         }
       }
     } else {
-      console.log('No vision board folder found for user')
+      console.log('No vision board folder found for user or Vision Board folder is empty')
+      setRerenderVisionBoard(false);
+      return setVisionBoardURLs([]);
     }
   };
 
@@ -152,6 +154,16 @@ const ContextProvider = ({ children }) => {
 
     if (error) {
       console.error("Error uploading avatar:", error);
+      if (error.error === "not_found") {
+        const { data: newUpload, error: newUploadError } = await supabase.storage
+          .from("avatars")
+          .upload(path, file);
+
+        if (newUploadError) {
+          console.error("Error uploading brand new avatar:", newUploadError);
+          return;
+        }
+      }
       return;
     }
 
@@ -165,6 +177,16 @@ const ContextProvider = ({ children }) => {
       .select(dbColumnName)
       .eq("id", userID); // Corrected to use dbColumnName
     // console.log(list);
+
+    if (!list || list.length === 0 || list === null) {
+      let { error: newUserError } = await supabase
+        .from("planner")
+        .insert({ id: user.id})
+      if (newUserError) {
+        console.error("Error inserting new user:", newUserError.statusText);
+        return;
+      }
+    }
     // Assuming list is an array with at least one object that has a list_items property
     if (list && list.length > 0 && list[0][dbColumnName]) {
       if (dbColumnName === "checklist_items") {
