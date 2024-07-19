@@ -66,7 +66,7 @@ export default function NewDream({ setState } : { setState: Function }) {
 
   return (
     <div className="fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-50 flex justify-center items-center">
-      <div className="flex flex-col relative items-center justify-between w-1/3 h-auto min-h-96 p-8 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-2xl dark:shadow-thick">
+      <div className="flex flex-col relative items-center justify-between w-1/3 h-auto min-h-96 p-8 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-2xl dark:shadow-thick gap-6">
         <button
           className="absolute top-2 right-2 border border-red-500 rounded-full px-3 py-1 text-red-500"
           onClick={() => {setFile(null),setTitle(''),setDate(''),setNotes(''),setState(false)}}
@@ -76,28 +76,34 @@ export default function NewDream({ setState } : { setState: Function }) {
         <p className="text-xl text-center font-medium text-primary dark:text-white">
             "Setting goals is the first step in turning the invisible into the visible"
         </p>
-        <input
-          className='w-1/2 text-primary dark:text-white'
-          type="text"
-          placeholder="I will..."
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
-        <input
-          className='w-1/2 text-primary dark:text-white'
-          type="text"
-          placeholder="Date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          
-        />
-        <input
-          className='w-1/2 text-primary dark:text-white'
-          type="text"
-          placeholder="Notes"
-          value={notes}
-          onChange={(e) => setNotes(e.target.value)}
-        />
+        <div className='p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70'>
+          <input
+            className='w-full text-gray-700  focus:text-lg text-center bg-transparent outline-none placeholder-black/60 dark:placeholder-white'
+            type="text"
+            placeholder="I will..."
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+        </div>
+        <div className='p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70'>
+          <input
+            className='w-full text-gray-700  focus:text-lg text-center bg-transparent outline-none placeholder-black/60 dark:placeholder-white'
+            type="text"
+            placeholder="Date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            
+          />
+        </div>
+        <div className='p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70'>
+          <input
+            className='w-full text-gray-700  focus:text-lg text-center bg-transparent outline-none placeholder-black/60 dark:placeholder-white'
+            type="text"
+            placeholder="Notes"
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+          />
+        </div>
         <div
           className="p-4 border-2 border-dashed border-gray-300 rounded-md"
           onDrop={handleDrop}
@@ -122,8 +128,8 @@ export default function NewDream({ setState } : { setState: Function }) {
             </ul>
           )}
         </div>
-        <div className="w-full flex flex-row justify-between items-center">
-          <button onClick={handleSave}>Save</button>
+        <div className="w-full flex flex-row justify-center items-center">
+          <button onClick={handleSave} className='p-2 bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover rounded-md'>Save</button>
         </div>
       </div>
     </div>

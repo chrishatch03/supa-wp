@@ -124,7 +124,7 @@ const ContextProvider = ({ children }) => {
 
   const fetchAvatarURL = async () => {
     if (!user || !user.id) return;
-
+    
     const basePath = `${user.id}/`; // Assuming the user's UID is used as a directory name
 
     const path = `${basePath}avatar`; // Adjusted to include the UID directory
