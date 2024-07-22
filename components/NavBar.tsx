@@ -15,7 +15,7 @@ export const NavBar = () => {
   return (
     
     <>
-      <button onClick={() => setNavOpen(!navOpen)} className={`z-10 ${navOpen ? "hidden" : ""} absolute top-8 right-8 flex flex-col items-center border-2 border-primary dark:border-white h-12 w-12 rounded-xl text-4xl`}>
+      <button onClick={() => setNavOpen(!navOpen)} className={`z-10 ${navOpen ? "hidden" : ""} absolute top-8 right-8 flex flex-col items-center border-2 border-primary text-primary h-12 w-12 rounded-xl text-4xl`}>
         ☰
       </button>
       <nav id="navBar" className={`z-10 ${navOpen ? "" : "hidden"} absolute top-0 right-0 w-1/4 flex justify-center h-full backdrop-blur-md`}>

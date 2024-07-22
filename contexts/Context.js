@@ -118,6 +118,190 @@ const ContextProvider = ({ children }) => {
     }
   };
 
+  const uploadFile = async function (file, user) {
+    const filePath = `${user.id}/${file.name}`;
+    const { data, error } = await supabase.storage
+      .from("visionBoard")
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false,
+      });
+  
+    if (error) {
+      console.log(`Error uploading file: ${file.name}, ${error.message}`);
+      return { file: file.name, status: 'Error', message: error.message };
+    } else {
+      console.log(`File uploaded: ${data.fullPath}`);
+      return { file: file.name, status: 'Uploaded', fullPath: data.fullPath };
+    }
+  }
+
+  const updateFile = async function (begFilePath, file, user) {
+
+    const { data, error } = await supabase
+      .storage
+      .from('visionBoard')
+      .remove([begFilePath])
+    
+      if (error) {
+        console.log(`Error Removing file: ${file.name}, ${error.message}`);
+        return { file: file.name, status: "Error", message: error.message };
+      } else {
+        console.log(`File Removed: ${begFilePath}`);
+        const filePath = `${user.id}/${file.name}`;
+        const { data, error } = await supabase.storage
+            .from("visionBoard")
+            .upload(filePath, file, {
+            cacheControl: '3600',
+            upsert: false,
+            });
+    
+        if (error) {
+            console.log(`Error uploading file: ${file.name}, ${error.message}`);
+            return { file: file.name, status: 'Error', message: error.message };
+        } else {
+            console.log(`File uploaded: ${data.fullPath}`);
+            return { file: file.name, status: 'Uploaded', fullPath: data.fullPath };
+        }
+      }
+    }
+    
+    const updateMetadata = async function (file, metadata, user) {
+        const filePath = `${user.id}/${file.name}`;
+        console.log('Upserting metadata:', JSON.stringify(metadata));
+        const { data: updatedMetadata, error } = await supabase
+            .from("image_metadata")
+            .update(metadata)
+            .eq('id', user.id).eq('file_name', metadata.file_name)
+            .select('id, file_name, title, goal_date, notes');
+        if (error) {
+            console.error('Error upserting metadata:', error);
+        } else {
+            console.log('Metadata upserting successfully:', updatedMetadata);
+        }
+    }
+    
+    const insertMetadata = async function (file, metadata, user) {
+        const filePath = `${user.id}/${file.name}`;
+        console.log('Upserting metadata:', JSON.stringify(metadata));
+        const { data: insertedMetadata, error } = await supabase
+            .from("image_metadata")
+            .insert(metadata)
+            .eq('id', user.id).eq('file_name', metadata.file_name)
+            .select('id, file_name, title, goal_date, notes');
+        if (error) {
+            console.error('Error upserting metadata:', error);
+        } else {
+            console.log('Metadata upserting successfully:', insertedMetadata);
+        }
+    }
+    
+    const deleteDream = async function (filePath) {
+        const { data, error } = await supabase
+            .storage
+            .from('visionBoard')
+            .remove([filePath])
+        if (error) {
+            console.log(`Error Removing file: ${filePath}, ${error.message}`);
+            return { file: filePath, status: "Error", message: error.message };
+        } else {
+            console.log(`File Removed: ${filePath}, removing metadata now...`);
+    
+            const { error } = await supabase
+            .from('image_metadata')
+            .delete()
+            .eq('file_name', filePath)
+            if (error) {
+                console.error('Error deleting metadata:', error);
+            } else {
+                console.log('Metadata deleted successfully');
+            }    
+        }
+    }
+  
+  const saveNewDream = async (file, title, date, notes) => {
+    if (!file) {
+      alert('Please select a file first!');
+      return;
+    }
+
+    const metadata = {};
+    if (title) metadata.title = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    if (date) metadata.goal_date = date;
+    if (user) metadata.id = user.id;
+    if (notes) metadata.notes = notes;
+    metadata.file_name = `${user.id}/${file.name}`;
+    try {
+      await uploadFile(file, user);
+      alert('File uploaded successfully!');
+      await insertMetadata(file, metadata, user);
+      setRerenderVisionBoard(true);
+    } catch (error) {
+      console.error('Upload failed:', error);
+      alert('Upload failed. Please try again.');
+    }
+  };
+
+  const saveEditedDream = async () => {
+    if (!file) {
+      alert("Please select a file first!");
+      return;
+    }
+    if (fileChanged) {
+      try {
+        await updateFile(begFile.path,file, user);
+        alert("File Save successfully!");
+        const metadata = {};
+        if (title) metadata.title = title;
+          if (date) metadata.goal_date = date;
+          if (user) metadata.id = user.id;
+          if (notes) metadata.notes = notes;
+          metadata.file_name = `${user.id}/${file.name}`;
+        updateMetadata(file, metadata, user);
+        alert("Metadata Save successfully!");
+        setRerenderVisionBoard(true);
+        setFile(null);
+        setTitle("");
+        setDate("");
+        setState(false); // Close the component after successful Save
+        return;
+      } catch (error) {
+        console.error("Save failed:", error);
+        alert("Save failed. Please try again.");
+      }
+      
+    }
+
+    if (hasChanged) {
+      try {
+        const metadata = {};
+          if (title) metadata.title = title;
+          if (date) metadata.goal_date = date;
+          if (user) metadata.id = user.id;
+          if (notes) metadata.notes = notes;
+          metadata.file_name = begFile.path
+        updateMetadata(file, metadata, user);
+        alert("Metadata Save successfully!");
+        setRerenderVisionBoard(true);
+        setFile(null);
+        setTitle("");
+        setDate("");
+        setState(false); // Close the component after successful Save
+      } catch (error) {
+        console.error("Metadata Save failed:", error);
+        alert("Save failed. Please try again.");
+      }
+      // Logic to close the component after upsert
+    } else {
+      // Logic to close the component directly if nothing has changed
+      setFile(null);
+      setTitle("");
+      setDate("");
+      setState(false); // Close the component If nothing has changed
+    }
+    
+  };
+
   useEffect(() => {
     fetchVisionBoardURLs();
   }, [rerenderVisionBoard]);
@@ -214,6 +398,7 @@ const ContextProvider = ({ children }) => {
       return setNotes(notes[0].notes);
     }
   };
+
   const updateNotes = async (newNotes) => {
     let { data: updatedNotes, error } = await supabase
       .from("planner")
@@ -846,6 +1031,9 @@ const ContextProvider = ({ children }) => {
         avatarURL,
         updateAvatar,
         visionBoardURLs,
+        saveNewDream,
+        saveEditedDream,
+        deleteDream,
         rerenderVisionBoard,
         setRerenderVisionBoard,
         checklistItems,

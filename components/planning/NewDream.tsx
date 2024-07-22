@@ -3,24 +3,24 @@
 
 import { useState } from 'react';
 import { useMyContext } from '@/contexts/Context';
-import { uploadFile } from '@/app/api/uploadFile';
-import { insertMetadata } from '@/app/api/updateFile';
+// import { uploadFile } from '@/app/api/uploadFile';
+// import { insertMetadata } from '@/app/api/updateFile';
 
 // Step 1: Define an interface for Metadata
-interface Metadata {
-  title?: string;
-  goal_date?: string;
-  id?: string;
-  notes?: string;
-  file_name?: string;
-}
+// interface Metadata {
+//   title?: string;
+//   goal_date?: string;
+//   id?: string;
+//   notes?: string;
+//   file_name?: string;
+// }
 
 interface File {
   name: string;
 }
 
 export default function NewDream({ setState } : { setState: Function }) {
-  const { user, setRerenderVisionBoard } = useMyContext();
+  const { saveNewDream } = useMyContext();
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState('');
   const [date, setDate] = useState('');
@@ -37,32 +37,50 @@ export default function NewDream({ setState } : { setState: Function }) {
     setFile(selectedFile);
   };
 
-  const handleSave = async () => {
+  const handleSaveNewDream = async () => {
     if (!file) {
-      alert('Please select a file first!');
-      return;
-    }
-
-    const metadata: Metadata = {};
-    if (title) metadata.title = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
-    if (date) metadata.goal_date = date;
-    if (user) metadata.id = user.id;
-    if (notes) metadata.notes = notes;
-    metadata.file_name = `${user.id}/${file.name}`;
+          alert('Please select a file first!');
+          return;
+        }
     try {
-      await uploadFile(file, user);
-      alert('File uploaded successfully!');
-      await insertMetadata(file, metadata, user);
-      setRerenderVisionBoard(true);
+      saveNewDream(file, title, date, notes);
       setFile(null);
       setTitle('');
       setDate('');
       setState(false); // Close the component after successful upload
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Upload failed:', error);
       alert('Upload failed. Please try again.');
     }
-  };
+  }
+
+  // const handleSaveNewDream = async () => {
+  //   if (!file) {
+  //     alert('Please select a file first!');
+  //     return;
+  //   }
+
+  //   const metadata: Metadata = {};
+  //   if (title) metadata.title = title.split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+  //   if (date) metadata.goal_date = date;
+  //   if (user) metadata.id = user.id;
+  //   if (notes) metadata.notes = notes;
+  //   metadata.file_name = `${user.id}/${file.name}`;
+  //   try {
+  //     await uploadFile(file, user);
+  //     alert('File uploaded successfully!');
+  //     await insertMetadata(file, metadata, user);
+  //     setRerenderVisionBoard(true);
+  //     setFile(null);
+  //     setTitle('');
+  //     setDate('');
+  //     setState(false); // Close the component after successful upload
+  //   } catch (error) {
+  //     console.error('Upload failed:', error);
+  //     alert('Upload failed. Please try again.');
+  //   }
+  // };
 
   return (
     <div className="fixed top-0 left-0 w-screen h-screen bg-white bg-opacity-50 flex justify-center items-center">
@@ -129,7 +147,7 @@ export default function NewDream({ setState } : { setState: Function }) {
           )}
         </div>
         <div className="w-full flex flex-row justify-center items-center">
-          <button onClick={handleSave} className='p-2 bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover rounded-md'>Save</button>
+          <button onClick={handleSaveNewDream} className='p-2 bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover rounded-md'>Save</button>
         </div>
       </div>
     </div>

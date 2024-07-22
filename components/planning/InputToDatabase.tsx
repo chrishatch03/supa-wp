@@ -31,16 +31,16 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
   };
 
   return (
-    <div className="h-16 mt-10 w-full bg-primary/15 dark:bg-white/70 rounded-2xl p-4 flex flex-col justify-center items-center">
+    <div className="mt-10 w-full bg-transparent rounded-2xl my-2 flex flex-col justify-center items-center">
       <form
-        className="flex flex-row w-full justify-between items-center text-primary"
+        className="flex flex-row w-full justify-between items-center text-primary dark:text-white gap-2"
         onSubmit={handleSubmit} // handleSubmit uses handleAddItem from context for form submission
       >
         {/* One or two input fields to handle different form data */}
         {dbColumnName === "mission_statement" ? (
           <>
             <input
-              className="h-full px-4 appearance-none bg-transparent w-full text-gray-700 mr-3 py-1 leading-tight focus:outline-none border-b border-white dark:border-primary"
+              className="px-4 focus:outline-none appearance-none h-8 rounded-lg w-full pl-3 pr-10 placeholder-gray-400 bg-primary/5 dark:bg-white/5"
               type="text"
               name="firstItem"
               placeholder="••••••••"
@@ -48,7 +48,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
               onChange={(e) => setFirstInputValue(e.target.value)}
             />
             <input
-              className="h-full px-4 appearance-none bg-transparent w-full text-gray-700 mr-3 py-1 leading-tight focus:outline-none border-1 border-b border-white dark:border-primary"
+              className="px-4 focus:outline-none appearance-none h-8 rounded-lg w-full pl-3 pr-10 placeholder-gray-400 bg-primary/5 dark:bg-white/5"
               type="text"
               name="secondItem"
               placeholder="••••••••"
@@ -58,7 +58,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
           </>
           ) : (
             <input
-              className="h-full px-4 appearance-none bg-transparent w-full text-gray-700 mr-3 py-1 leading-tight focus:outline-none border-b border-white dark:border-primary"
+              className="px-4 focus:outline-none appearance-none h-8 rounded-lg w-full pl-3 pr-10 placeholder-gray-400 bg-primary/5 dark:bg-white/5"
               type="text"
               name="firstItem"
               placeholder="••••••••"
@@ -67,7 +67,7 @@ export const InputToDatabase = ({ dbColumnName }: { dbColumnName: string }) => {
             />
           )}
         <SubmitButton
-          className="border border-white dark:border-primary rounded-lg px-4 py-2 text-white dark:text-primary"
+          className="border border-primary dark:border-white rounded-lg px-4 py-2 text-primary dark:text-white h-8 flex flex-row items-center justify-center"
           pendingText="..."
         >
           +

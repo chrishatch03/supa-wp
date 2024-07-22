@@ -4,7 +4,7 @@ import { InputToDatabase } from "./InputToDatabase";
 
 export const RolesAndGoals = () => {
   return (
-    <div className="p-4 h-full flex flex-col justify-between gap-4">
+    <div className="h-full flex flex-col justify-between gap-4">
       <div className=" p-4 flex flex-col justify-between items-center w-full h-full ring-1 rounded-3xl dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'">
         <p className="text-lg mb-4 md:mb-auto tracking-tight font-medium text-primary dark:text-white md:text-4xl">
           Roles

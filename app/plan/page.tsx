@@ -40,9 +40,8 @@ export default async function PlanPage() {
         >
           <MyPlan />
         </div>
-        <div className='w-full h-full ring-1 rounded-3xl
-            min-h-empty
-            dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
+        <div className='w-full h-full rounded-3xl
+            min-h-empty'
         
         >
           <RolesAndGoals />

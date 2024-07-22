@@ -15,10 +15,10 @@ const Notes = () => {
     }
   return (
     <>
-      <form onSubmit={handleSubmit}>
-        <div className="w-full mb-4 border border-gray-200 rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
+      <form onSubmit={handleSubmit} className="w-full h-full flex flex-col justify-between p-2">
+        <div className=" w-full mb-4 border border-gray-200 rounded-t-2xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600">
           <div className="flex items-center justify-between px-3 py-2 border-b dark:border-gray-600">
-            
+            <p>My Notes</p>
             <button
               type="button"
               data-tooltip-target="tooltip-fullscreen"
@@ -57,7 +57,7 @@ const Notes = () => {
             <textarea
               id="editor"
               rows={8}
-              className="block w-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
+              className="block w-full h-full px-0 text-sm text-gray-800 bg-white border-0 dark:bg-gray-800 focus:ring-0 dark:text-white dark:placeholder-gray-400"
               placeholder="Write an article..."
               value={newNotes}
               onChange={(e) => setNewNotes(e.target.value)}
@@ -67,7 +67,7 @@ const Notes = () => {
         </div>
         <button
           type="submit"
-          className="inline-flex items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
+          className="justify-center inline-flex w-full items-center px-5 py-2.5 text-sm font-medium text-center text-white bg-blue-700 rounded-lg focus:ring-4 focus:ring-blue-200 dark:focus:ring-blue-900 hover:bg-blue-800"
         >
           Save
         </button>

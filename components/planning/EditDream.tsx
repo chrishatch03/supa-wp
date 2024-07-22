@@ -3,7 +3,7 @@
 
 import { useState, useEffect } from "react";
 import { useMyContext } from "@/contexts/Context";
-import { updateFile, updateMetadata, deleteDream } from "@/app/api/updateFile";
+// import { updateFile, updateMetadata, deleteDream } from "@/app/api/updateFile";
 
 // Step 1: Define an interface for Metadata
 interface Metadata {
@@ -21,7 +21,7 @@ export default function EditDream({
   setState: Function;
   startFile: any;
 }) {
-  const { user, setRerenderVisionBoard } = useMyContext();
+  const { user, deleteDream, saveEditedDream, setRerenderVisionBoard } = useMyContext();
 
   const begFile = startFile;
 
@@ -35,10 +35,13 @@ export default function EditDream({
 
   // Track changes in the component's state
   useEffect(() => {
-    const isChanged = title !== begFile.title || date !== begFile.goal_date || notes !== begFile.notes;
+    const isChanged =
+      title !== begFile.title ||
+      date !== begFile.goal_date ||
+      notes !== begFile.notes;
     setHasChanged(isChanged);
   }, [title, date, notes, begFile.title, begFile.goal_date, begFile.notes]);
-  
+
   useEffect(() => {
     const isChanged = file.name !== begFile.name;
     setFileChanged(isChanged);
@@ -55,53 +58,16 @@ export default function EditDream({
     setFile(selectedFile);
   };
 
-  const handleSave = async () => {
+  const handleSaveEditedDream = async () => {
     if (!file) {
       alert("Please select a file first!");
       return;
     }
     if (fileChanged) {
       try {
-        await updateFile(begFile.path,file, user);
-        alert("File Save successfully!");
-        const metadata: Metadata = {};
-        if (title) metadata.title = title;
-          if (date) metadata.goal_date = date;
-          if (user) metadata.id = user.id;
-          if (notes) metadata.notes = notes;
-          metadata.file_name = `${user.id}/${file.name}`;
-        updateMetadata(file, metadata, user);
-        alert("Metadata Save successfully!");
-        setRerenderVisionBoard(true);
-        setFile(null);
-        setTitle("");
-        setDate("");
-        setState(false); // Close the component after successful Save
-        return;
+        saveEditedDream(file, title, date, notes);
       } catch (error) {
-        console.error("Save failed:", error);
-        alert("Save failed. Please try again.");
-      }
-      
-    }
-
-    if (hasChanged) {
-      try {
-        const metadata: Metadata = {};
-          if (title) metadata.title = title;
-          if (date) metadata.goal_date = date;
-          if (user) metadata.id = user.id;
-          if (notes) metadata.notes = notes;
-          metadata.file_name = begFile.path
-        updateMetadata(file, metadata, user);
-        alert("Metadata Save successfully!");
-        setRerenderVisionBoard(true);
-        setFile(null);
-        setTitle("");
-        setDate("");
-        setState(false); // Close the component after successful Save
-      } catch (error) {
-        console.error("Metadata Save failed:", error);
+        console.error("Save of edited dream failed:", error);
         alert("Save failed. Please try again.");
       }
       // Logic to close the component after upsert
@@ -112,8 +78,67 @@ export default function EditDream({
       setDate("");
       setState(false); // Close the component If nothing has changed
     }
-    
   };
+
+  // const handleSaveEditedDream = async () => {
+  //   if (!file) {
+  //     alert("Please select a file first!");
+  //     return;
+  //   }
+  //   if (fileChanged) {
+  //     try {
+  //       await updateFile(begFile.path,file, user);
+  //       alert("File Save successfully!");
+  //       const metadata: Metadata = {};
+  //       if (title) metadata.title = title;
+  //         if (date) metadata.goal_date = date;
+  //         if (user) metadata.id = user.id;
+  //         if (notes) metadata.notes = notes;
+  //         metadata.file_name = `${user.id}/${file.name}`;
+  //       updateMetadata(file, metadata, user);
+  //       alert("Metadata Save successfully!");
+  //       setRerenderVisionBoard(true);
+  //       setFile(null);
+  //       setTitle("");
+  //       setDate("");
+  //       setState(false); // Close the component after successful Save
+  //       return;
+  //     } catch (error) {
+  //       console.error("Save failed:", error);
+  //       alert("Save failed. Please try again.");
+  //     }
+
+  //   }
+
+  //   if (hasChanged) {
+  //     try {
+  //       const metadata: Metadata = {};
+  //         if (title) metadata.title = title;
+  //         if (date) metadata.goal_date = date;
+  //         if (user) metadata.id = user.id;
+  //         if (notes) metadata.notes = notes;
+  //         metadata.file_name = begFile.path
+  //       updateMetadata(file, metadata, user);
+  //       alert("Metadata Save successfully!");
+  //       setRerenderVisionBoard(true);
+  //       setFile(null);
+  //       setTitle("");
+  //       setDate("");
+  //       setState(false); // Close the component after successful Save
+  //     } catch (error) {
+  //       console.error("Metadata Save failed:", error);
+  //       alert("Save failed. Please try again.");
+  //     }
+  //     // Logic to close the component after upsert
+  //   } else {
+  //     // Logic to close the component directly if nothing has changed
+  //     setFile(null);
+  //     setTitle("");
+  //     setDate("");
+  //     setState(false); // Close the component If nothing has changed
+  //   }
+
+  // };
 
   const handleDeleteDream = async () => {
     try {
@@ -143,7 +168,7 @@ export default function EditDream({
           "Setting goals is the first step in turning the invisible into the
           visible"
         </p>
-        <div className='p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70'>
+        <div className="p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70">
           <input
             className="w-full text-gray-700  focus:text-lg text-center bg-transparent outline-none placeholder-black/60 dark:placeholder-white"
             type="text"
@@ -152,7 +177,7 @@ export default function EditDream({
             onChange={(e) => setTitle(e.target.value)}
           />
         </div>
-        <div className='p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70'>
+        <div className="p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70">
           <input
             className="w-full text-gray-700  focus:text-lg text-center bg-transparent outline-none placeholder-black/60 dark:placeholder-white"
             type="text"
@@ -161,7 +186,7 @@ export default function EditDream({
             onChange={(e) => setDate(e.target.value)}
           />
         </div>
-        <div className='p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70'>
+        <div className="p-2 rounded-lg flex flex-col justify-center items-center w-3/4 border-b border-white dark:border-primary bg-primary/15 dark:bg-white/70">
           <input
             className="w-full text-gray-700  focus:text-lg text-center bg-transparent outline-none placeholder-black/60 dark:placeholder-white"
             type="text"
@@ -191,14 +216,29 @@ export default function EditDream({
           {file && (
             <ul className="w-full h-auto flex flex-col items-center justify-center mt-4">
               <li className="w-1/2 flex flex-row justify-between items-center">
-              {file.name && file.name !== '' && (<><p>{file.name}</p><button onClick={() => setFile({name:''})}>X</button></>)}
+                {file.name && file.name !== "" && (
+                  <>
+                    <p>{file.name}</p>
+                    <button onClick={() => setFile({ name: "" })}>X</button>
+                  </>
+                )}
               </li>
             </ul>
           )}
         </div>
         <div className="w-full flex flex-row justify-between items-center">
-          <button onClick={handleDeleteDream} className='p-2 bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover rounded-md'>Delete</button>
-          <button onClick={handleSave} className='p-2 bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover rounded-md'>Save</button>
+          <button
+            onClick={handleDeleteDream}
+            className="p-2 bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover rounded-md"
+          >
+            Delete
+          </button>
+          <button
+            onClick={handleSaveEditedDream}
+            className="p-2 bg-primary dark:bg-white text-white dark:text-primary hover:bg-btn-background-hover rounded-md"
+          >
+            Save
+          </button>
         </div>
       </div>
     </div>
