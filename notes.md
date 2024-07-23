@@ -1,3 +1,7 @@
 # Notes
 ### Everyone Get Ready
-trying out a new way of taking notes on my project
+
+## Git
+
+### Merging Commit Conflicts
+Resolving commit conflicts was not straight forward. Run ```git pull --rebase=false``` to pull the changes and review the merge. 
