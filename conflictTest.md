@@ -1,0 +1,1 @@
+Test code to test conflicts with git.
