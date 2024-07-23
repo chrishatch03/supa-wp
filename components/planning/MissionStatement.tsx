@@ -12,14 +12,7 @@ export const MissionStatement = () => {
                   MISSION STATEMENT
                 </p>
               </div>
-              <div className="justify-end">
-                  <a href="#">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                  </a>
-              </div>
+              
             </div>
             <p className="mt-4 text-sm text-zinc-500 dark:text-zinc-400">
               A mission statement is not something you write overnight... But fundamentally, your mission statement becomes your constitution, the solid expression of your vision and values. It becomes the criterion by which you measure everything else in your life.

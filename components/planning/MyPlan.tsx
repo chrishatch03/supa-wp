@@ -133,7 +133,7 @@ export const MyPlan = () => {
             </button>
           </div>
           <div className="">
-            <p className="text-3xl mt-6 mb-4 md:mb-auto font-medium lg:text-4xl tracking-tight text-primary dark:text-white">
+            <p className="text-3xl mt-6 mb-4 md:mb-auto font-medium lg:text-5xl tracking-tight text-primary dark:text-white">
               This week
             </p>
             {/* Checklist */}
