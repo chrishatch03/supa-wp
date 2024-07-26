@@ -7,6 +7,7 @@ import { MissionStatement } from "@/components/planning/MissionStatement";
 import { VisionBoard } from "@/components/planning/VisionBoard";
 import Notes from "@/components/planning/Notes";
 import ScriptureStudy from "@/components/planning/ScriptureStudy";
+import Chatroom from "@/components/chatroom/Chatroom";
 
 export default async function PlanPage() {
   const supabase = createClient();
@@ -72,6 +73,7 @@ export default async function PlanPage() {
             dark:ring-white/10 ring-primary/5 bg-white dark:bg-secondary shadow-xl dark:shadow-thick'
         
         ><Notes /></div>
+        <Chatroom />
     </div>
     </>
   );

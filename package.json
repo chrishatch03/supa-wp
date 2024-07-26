@@ -29,7 +29,8 @@
     "tailwindcss": "3.4.1",
     "tus-js-client": "^4.1.0",
     "typescript": "5.3.3",
-    "uppy": "^4.0.4"
+    "uppy": "^4.0.4",
+    "ws": "^8.18.0"
   },
   "devDependencies": {
     "@types/node": "20.11.5",
